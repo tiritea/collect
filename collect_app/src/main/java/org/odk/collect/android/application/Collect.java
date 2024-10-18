@@ -41,8 +41,9 @@ import org.odk.collect.android.utilities.FormsRepositoryProvider;
 import org.odk.collect.android.utilities.LocaleHelper;
 import org.odk.collect.androidshared.data.AppState;
 import org.odk.collect.androidshared.data.StateStore;
-import org.odk.collect.androidshared.network.NetworkStateProvider;
+import org.odk.collect.async.network.NetworkStateProvider;
 import org.odk.collect.androidshared.system.ExternalFilesUtils;
+import org.odk.collect.async.Scheduler;
 import org.odk.collect.audiorecorder.AudioRecorderDependencyComponent;
 import org.odk.collect.audiorecorder.AudioRecorderDependencyComponentProvider;
 import org.odk.collect.audiorecorder.DaggerAudioRecorderDependencyComponent;
@@ -196,11 +197,11 @@ public class Collect extends Application implements
                 .build();
 
         projectsDependencyComponent = DaggerProjectsDependencyComponent.builder()
-                .projectsDependencyModule(new CollectProjectsDependencyModule(applicationComponent.projectsRepository()))
+                .projectsDependencyModule(new CollectProjectsDependencyModule(applicationComponent))
                 .build();
 
         selfieCameraDependencyComponent = DaggerSelfieCameraDependencyComponent.builder()
-                .selfieCameraDependencyModule(new CollectSelfieCameraDependencyModule(applicationComponent::permissionsChecker))
+                .selfieCameraDependencyModule(new CollectSelfieCameraDependencyModule(applicationComponent))
                 .build();
 
         drawDependencyComponent = DaggerDrawDependencyComponent.builder()
@@ -299,12 +300,7 @@ public class Collect extends Application implements
         if (geoDependencyComponent == null) {
             geoDependencyComponent = DaggerGeoDependencyComponent.builder()
                     .application(this)
-                    .geoDependencyModule(new CollectGeoDependencyModule(
-                            applicationComponent.mapFragmentFactory(),
-                            applicationComponent.locationClient(),
-                            applicationComponent.scheduler(),
-                            applicationComponent.permissionsChecker()
-                    ))
+                    .geoDependencyModule(new CollectGeoDependencyModule(applicationComponent))
                     .build();
         }
 
@@ -316,11 +312,7 @@ public class Collect extends Application implements
     public OsmDroidDependencyComponent getOsmDroidDependencyComponent() {
         if (osmDroidDependencyComponent == null) {
             osmDroidDependencyComponent = DaggerOsmDroidDependencyComponent.builder()
-                    .osmDroidDependencyModule(new CollectOsmDroidDependencyModule(
-                            applicationComponent.referenceLayerRepository(),
-                            applicationComponent.locationClient(),
-                            applicationComponent.settingsProvider()
-                    ))
+                    .osmDroidDependencyModule(new CollectOsmDroidDependencyModule(applicationComponent))
                     .build();
         }
 
@@ -345,6 +337,12 @@ public class Collect extends Application implements
                             String projectId = applicationComponent.currentProjectProvider().getCurrentProject().getUuid();
                             return applicationComponent.entitiesRepositoryProvider().get(projectId);
                         }
+
+                        @NonNull
+                        @Override
+                        public Scheduler providesScheduler() {
+                            return applicationComponent.scheduler();
+                        }
                     })
                     .build();
         }
@@ -363,11 +361,7 @@ public class Collect extends Application implements
     public GoogleMapsDependencyComponent getGoogleMapsDependencyComponent() {
         if (googleMapsDependencyComponent == null) {
             googleMapsDependencyComponent = DaggerGoogleMapsDependencyComponent.builder()
-                    .googleMapsDependencyModule(new CollectGoogleMapsDependencyModule(
-                            applicationComponent.referenceLayerRepository(),
-                            applicationComponent.locationClient(),
-                            applicationComponent.settingsProvider()
-                    ))
+                    .googleMapsDependencyModule(new CollectGoogleMapsDependencyModule(applicationComponent))
                     .build();
         }
 

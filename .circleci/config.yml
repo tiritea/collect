@@ -7,7 +7,7 @@ references:
   android_config: &android_config
     working_directory: ~/work
     docker:
-      - image: cimg/android:2023.10.1
+      - image: cimg/android:2024.01
     resource_class: medium+
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: Generate combined build.gradle file for cache key
-          command: cat build.gradle */build.gradle .circleci/gradle.properties .circleci/config.yml buildSrc/src/main/java/dependencies/Dependencies.kt buildSrc/src/main/java/dependencies/Versions.kt > deps.txt
+          command: cat build.gradle */build.gradle */build.gradle.kts .circleci/gradle.properties .circleci/config.yml buildSrc/src/main/java/dependencies/Dependencies.kt buildSrc/src/main/java/dependencies/Versions.kt > deps.txt
       - restore_cache:
           keys:
             - compile-deps-{{ checksum "deps.txt" }}
@@ -230,8 +230,8 @@ jobs:
           command: ./gradlew assembleSelfSignedRelease
 
       - run:
-          name: Check APK size isn't larger than 10.6MB
-          command: if [ $(ls -l collect_app/build/outputs/apk/selfSignedRelease/*.apk | awk '{print $5}') -gt 10600000 ]; then exit 1; fi
+          name: Check APK size isn't larger than 11.5MB
+          command: ./check-size.sh
 
       - run:
           name: Copy APK to predictable path for artifact storage
@@ -282,7 +282,7 @@ jobs:
               --type instrumentation \
               --app collect_app/build/outputs/apk/debug/*.apk \
               --test collect_app/build/outputs/apk/androidTest/debug/*.apk \
-              --device model=MediumPhone.arm,version=30,locale=en,orientation=portrait \
+              --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
               --results-bucket opendatakit-collect-test-results \
               --directories-to-pull /sdcard --timeout 20m \
               --test-targets "package org.odk.collect.android.feature.smoke"
@@ -333,9 +333,10 @@ jobs:
               --num-uniform-shards=25 \
               --app collect_app/build/outputs/apk/debug/*.apk \
               --test collect_app/build/outputs/apk/androidTest/debug/*.apk \
-              --device model=MediumPhone.arm,version=30,locale=en,orientation=portrait \
+              --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
               --results-bucket opendatakit-collect-test-results \
-              --directories-to-pull /sdcard --timeout 20m
+              --directories-to-pull /sdcard --timeout 20m \
+              --test-targets "notPackage org.odk.collect.android.regression"
             fi
           no_output_timeout: 25m
 

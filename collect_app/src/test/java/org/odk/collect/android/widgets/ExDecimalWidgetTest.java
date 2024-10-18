@@ -1,19 +1,5 @@
 package org.odk.collect.android.widgets;
 
-import androidx.annotation.NonNull;
-
-import org.javarosa.core.model.data.DecimalData;
-import org.odk.collect.android.formentry.questions.QuestionDetails;
-import org.javarosa.core.model.data.IAnswerData;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.odk.collect.android.widgets.base.GeneralExStringWidgetTest;
-import org.odk.collect.android.widgets.support.FakeWaitingForDataRegistry;
-import org.odk.collect.android.widgets.utilities.StringRequester;
-
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -21,6 +7,23 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.odk.collect.android.utilities.Appearances.THOUSANDS_SEP;
+
+import android.text.InputType;
+
+import androidx.annotation.NonNull;
+
+import org.javarosa.core.model.Constants;
+import org.javarosa.core.model.data.DecimalData;
+import org.javarosa.core.model.data.IAnswerData;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.odk.collect.android.formentry.questions.QuestionDetails;
+import org.odk.collect.android.widgets.base.GeneralExStringWidgetTest;
+import org.odk.collect.android.widgets.support.FakeWaitingForDataRegistry;
+import org.odk.collect.android.widgets.utilities.StringRequester;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * @author James Knight
@@ -37,6 +40,7 @@ public class ExDecimalWidgetTest extends GeneralExStringWidgetTest<ExDecimalWidg
     @NonNull
     @Override
     public ExDecimalWidget createWidget() {
+        when(formEntryPrompt.getDataType()).thenReturn(Constants.DATATYPE_DECIMAL);
         return new ExDecimalWidget(activity, new QuestionDetails(formEntryPrompt), new FakeWaitingForDataRegistry(), stringRequester);
     }
 
@@ -72,20 +76,29 @@ public class ExDecimalWidgetTest extends GeneralExStringWidgetTest<ExDecimalWidg
 
         ExDecimalWidget exDecimalWidget = new ExDecimalWidget(activity, new QuestionDetails(formEntryPrompt), new FakeWaitingForDataRegistry(), stringRequester);
 
-        assertThat(exDecimalWidget.getAnswerText(), is(equalTo(fifteenDigitString)));
+        assertThat(exDecimalWidget.binding.widgetAnswerText.getAnswer(), is(equalTo(fifteenDigitString)));
 
         exDecimalWidget = new ExDecimalWidget(activity, new QuestionDetails(formEntryPrompt), new FakeWaitingForDataRegistry(), stringRequester);
 
-        assertThat(exDecimalWidget.getAnswerText(), is(equalTo(fifteenDigitString)));
+        assertThat(exDecimalWidget.binding.widgetAnswerText.getAnswer(), is(equalTo(fifteenDigitString)));
     }
 
     @Test
     public void separatorsShouldBeAddedWhenEnabled() {
         when(formEntryPrompt.getAppearanceHint()).thenReturn(THOUSANDS_SEP);
-        getWidget().widgetAnswerText.setAnswer("123456789.54");
+        getWidget().binding.widgetAnswerText.setAnswer("123456789.54");
 
-        assertEquals("123,456,789.54", getWidget().widgetAnswerText.getAnswer());
-        assertEquals("123,456,789.54", getWidget().widgetAnswerText.getBinding().editText.getText().toString());
-        assertEquals("123,456,789.54", getWidget().widgetAnswerText.getBinding().textView.getText().toString());
+        assertEquals("123,456,789.54", getWidget().binding.widgetAnswerText.getAnswer());
+        assertEquals("123,456,789.54", getWidget().binding.widgetAnswerText.getBinding().editText.getText().toString());
+        assertEquals("123,456,789.54", getWidget().binding.widgetAnswerText.getBinding().textView.getText().toString());
+    }
+
+    @Override
+    @Test
+    public void verifyInputType() {
+        ExDecimalWidget widget = getWidget();
+        assertThat(widget.binding.widgetAnswerText.getBinding().editText.getInputType(), equalTo(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL));
+        assertThat(widget.binding.widgetAnswerText.getBinding().editText.getTransformationMethod(), equalTo(null));
+        assertThat(widget.binding.widgetAnswerText.getBinding().textView.getTransformationMethod(), equalTo(null));
     }
 }

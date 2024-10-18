@@ -353,14 +353,24 @@ N\'ukomea guhura n\'iki kibazo, wakigeza kuwa gusabye gukusanya  amakuru.</strin
   <string name="google_play_services_error_occured">Ntibishoka ko ukoresha ikarita iranga ahantu.Reba ko waba ufite google play muri telefone yawe</string>
   <string name="carto_map_style_positron">Utunyangingo.</string>
   <string name="carto_map_style_dark_matter">Ibibazo bidasobanutse cg byijimye.</string>
-  <string name="reference_layer">Indangakitegererezo.</string>
-  <string name="layer_data_file">Ububiko bw\'amakuru shingiro.</string>
-  <string name="view_change_location">Kora igenzura cyangwa uhindure ujye ahandi</string>
-  <string name="change_location">Hindura ujye ahandi</string>
+  <!--Title for the offline layer section of settings-->
+  <!--Label for the offline layer setting-->
+  <!--Title for the screen that allows the user to select a offline layer for maps-->
+  <!--Description of how to add offline layers to the project-->
+  <!--Text of button user can press to get help when setting up Offline Layers-->
+  <!--Text for button that lets the user select a offline layer on their device to add-->
+  <!--Text for button that lets the user delete a offline layer-->
+  <!--Text for title displayed in a dialog to inform that some/all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that some of the selected files are not MBTiles and they can't be imported-->
+  <!--Text for title above list of layers-->
+  <!--Text for title and subtitle above options for how the layer can be access-->
+  <!--Text for option where layer should be available to all projects-->
+  <!--Text for option where layer should be available to the current project only-->
+  <!--Text for message displayed in a dialog to confirm that the layer should be deleted. The placeholder is the name of the layer as displayed in the list-->
   <string name="record_geopoint">Irabika amakuru</string>
   <string name="location_accuracy">Birizewe: %1$s m</string>
   <string name="location_provider">Igitanga aho uri ubu: %s</string>
-  <string name="get_location">Fata amakuru y\'ahantu</string>
   <string name="provider_disabled_error">Ihangane, ibituma amakuru y\'ahantu afatwa birafunze</string>
   <string name="gps_result">Ubujy\'ejuru: %1$s \nUmurambararo: %2$s \nUbutumburuke: %3$s m\n Byizewe: %4$s m</string>
   <string name="google_play_services_not_available">Iyi form irashaka kugenzura aho uherereye, ariko Google Play Services ntabwo iboneka</string>
@@ -372,12 +382,6 @@ N\'ukomea guhura n\'iki kibazo, wakigeza kuwa gusabye gukusanya  amakuru.</strin
   <string name="background_location_disabled">Iyi form ishaka kwerekana aho uherereye ariko ntiwabifunguye. Yishyireho 1%1$s murutonde ruri hejuru.</string>
   <string name="background_location_enabled">Iyi form iri kwerekana aho uherereye.Ushobobora kubihagarika muri 1%1$s unyuze ku rutonde ruri hejuru aha</string>
   <!--Text of an option available when filling out a form. Tapping this option checks the form for constraint or required violations and navigates the user back to the first field with an error.-->
-  <string name="get_point">Reba amakuru y\'ahantu</string>
-  <string name="geopoint_view_read_only">Reba amakuru y\'ahantu</string>
-  <string name="geoshape_view_read_only">Garagaza imiterere yahantu.</string>
-  <string name="geotrace_view_read_only">Garagaza ikimenyetso kiranga ahantu.</string>
-  <string name="get_shape">Tangira cg Shushanya imiterere yahantu.</string>
-  <string name="get_trace">Tangira cg Shakisha ibimenyetso biranga ahantu.</string>
   <!--%1$s is the time taken so far in hh:mm:ss-->
   <!--%1$s is the accuracy required for a point to be automatically saved-->
   <!--%1$s is the number of satellites being used to get location-->
@@ -436,13 +440,10 @@ N\'ukomea guhura n\'iki kibazo, wakigeza kuwa gusabye gukusanya  amakuru.</strin
   <string name="geopoint_instruction">Kanda umare umwanya kugirango ushyiremo mark cg ukore kuri buto ya marker</string>
   <string name="geopoint_no_draggable_instruction">Kanda hano wemeze.</string>
   <string name="discard">Kuraho cg Jugunya.</string>
-  <string name="geoshape_view_change_location">Garagaza cg Uhindure imiterere yahantu.</string>
-  <string name="geotrace_view_change_location">Garagaza cg Uhindure ikimenyetso ndangahantu.</string>
   <!--Name of an action button-->
   <string name="view_data">Reba Form Wabitse </string>
   <!--Name for the location tracking notifications. Will be seen in Android settings.-->
   <!--Title for notification that lets user know their location is currently being tracked-->
-  <!--Text of button user can press to get help when setting up Reference Layers-->
   <!--Description for button that zooms to the user's current location on a map-->
   <!--Description for button that zooms a map so that it shows all items-->
   <!--Description for button that pauses automatic location recording-->
@@ -507,11 +508,8 @@ N\'ukomea guhura n\'iki kibazo, wakigeza kuwa gusabye gukusanya  amakuru.</strin
   <string name="delete_file">Siba icyo utoranije</string>
   <string name="delete_no">Ntubisibe</string>
   <string name="delete_yes">Siba ifishi</string>
-  <string name="file_deleted_error">Ihangane, %1$s muri %2$s z\' Ifishi wahisemo ntizabashije gusibwa.</string>
   <string name="form_delete_message">Ifishi wahisemo ziri gusibwa</string>
-  <string name="deleting_form_dialog_update_message">Ifishi zimaze gusibwa ni %1$d muri %2$d</string>
   <string name="file_deleted_ok">Ifishi %s zamaze gusibwa</string>
-  <string name="file_delete_in_progress">Ihangane, Igikorwa cyo gusiba ifishi kiracyari gukorwa</string>
   <!--##############################################
     # UNPROTECTED SETTINGS
     ##############################################-->
@@ -804,6 +802,11 @@ Birashoboka ko ari zimwe zashyizwemo mubihe bitandukanye cgw ziturutse ahatanduk
     # Permissions
     ##############################################-->
   <!--An entity is any person, place or thing that a form can be about. This title appears on an experimental settings screen to view entities managed in the current project.-->
+  <!--Title for setting that controls whether local entity features are enabled or not-->
+  <!--Text for button that leads to browser for the user to view and manage entity lists-->
+  <!--Text for button that deletes all entities for the project-->
+  <!--Text for button that adds a new entity list-->
+  <!--Label for entity that has been created offline and is not on the server yet-->
   <!--##############################################
     # Crash handling
     ##############################################-->
@@ -848,4 +851,22 @@ Birashoboka ko ari zimwe zashyizwemo mubihe bitandukanye cgw ziturutse ahatanduk
   <!--Message displayed when the list of forms to delete is empty-->
   <!--Subtext displayed when the list of blank forms to delete is empty-->
   <!--Subtext displayed when the list of filled forms to delete is empty-->
+  <!--##############################################
+    # Savepoint recovery dialog
+    ##############################################-->
+  <!--Title displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Message displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Text for the button that accepts the recovery of the work-->
+  <!--Text for the button that declines the recovery of the work-->
+  <string name="do_not_recover">Kuraho cg Jugunya.</string>
+  <!--Text for the button that initiates getting user location-->
+  <!--Text for the button that displays a map for viewing or changing an already existing location-->
+  <!--Text for the button that displays a map for viewing an already existing location-->
+  <!--Text for the button that initiates getting user location when one is already present-->
+  <!--Text for the button that displays a map for getting a new line-->
+  <!--Text for the button that displays a map for viewing or changing an already existing line-->
+  <!--Text for the button that displays a map for viewing an already existing line-->
+  <!--Text for the button that displays a map for getting a new polygon-->
+  <!--Text for the button that displays a map for viewing or changing an already existing polygon-->
+  <!--Text for the button that displays a map for viewing an already existing polygon-->
 </resources>

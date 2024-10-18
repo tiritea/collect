@@ -16,6 +16,7 @@ import org.odk.collect.android.javarosawrapper.JavaRosaFormController
 import org.odk.collect.android.utilities.FileUtils
 import org.odk.collect.android.utilities.FormUtils
 import org.odk.collect.entities.EntitiesRepository
+import org.odk.collect.entities.LocalEntityUseCases
 import org.odk.collect.forms.Form
 import org.odk.collect.forms.FormsRepository
 import org.odk.collect.forms.instances.Instance
@@ -31,7 +32,8 @@ object FormEntryUseCases {
         formDefCache: FormDefCache
     ): Pair<FormDef, Form>? {
         val form =
-            formsRepository.getAllByFormIdAndVersion(instance.formId, instance.formVersion).firstOrNull()
+            formsRepository.getAllByFormIdAndVersion(instance.formId, instance.formVersion)
+                .firstOrNull()
         return if (form == null) {
             null
         } else {
@@ -102,23 +104,12 @@ object FormEntryUseCases {
         )
     }
 
-    fun getSavePoint(formController: FormController, cacheDir: File): File? {
-        val instanceXml = formController.getInstanceFile()!!
-        val savepointFile = File(cacheDir, "${instanceXml.name}.save")
-
-        return if (savepointFile.exists() && savepointFile.lastModified() > instanceXml.lastModified()) {
-            savepointFile
-        } else {
-            null
-        }
-    }
-
     fun saveDraft(
         form: Form,
         formController: FormController,
         instancesRepository: InstancesRepository
     ): Instance {
-        saveFormToDisk(formController)
+        saveInstanceToDisk(formController)
         return instancesRepository.save(
             Instance.Builder()
                 .formId(form.formId)
@@ -138,10 +129,12 @@ object FormEntryUseCases {
         val instance =
             getInstanceFromFormController(formController, instancesRepository)!!
 
-        val valid = finalizeInstance(formController, entitiesRepository)
+        val validationResult = formController.validateAnswers(false)
+        val valid = validationResult !is FailedValidationResult
 
         return if (valid) {
-            saveFormToDisk(formController)
+            finalizeFormController(formController, entitiesRepository)
+            saveInstanceToDisk(formController)
             val instanceName = formController.getSubmissionMetadata()?.instanceName
 
             instancesRepository.save(
@@ -162,6 +155,18 @@ object FormEntryUseCases {
         }
     }
 
+    @JvmStatic
+    fun finalizeFormController(
+        formController: FormController,
+        entitiesRepository: EntitiesRepository
+    ) {
+        formController.finalizeForm()
+        LocalEntityUseCases.updateLocalEntitiesFromForm(
+            formController.getEntities(),
+            entitiesRepository
+        )
+    }
+
     private fun getInstanceFromFormController(
         formController: FormController,
         instancesRepository: InstancesRepository
@@ -170,24 +175,9 @@ object FormEntryUseCases {
         return instancesRepository.getOneByPath(instancePath)
     }
 
-    private fun saveFormToDisk(formController: FormController) {
+    private fun saveInstanceToDisk(formController: FormController) {
         val payload = formController.getSubmissionXml()
         FileUtils.write(formController.getInstanceFile(), payload!!.payloadBytes)
-    }
-
-    @JvmStatic
-    private fun finalizeInstance(
-        formController: FormController,
-        entitiesRepository: EntitiesRepository
-    ): Boolean {
-        val validationResult = formController.validateAnswers(markCompleted = true, moveToInvalidIndex = false)
-        if (validationResult is FailedValidationResult) {
-            return false
-        }
-
-        formController.finalizeForm()
-        formController.getEntities().forEach { entity -> entitiesRepository.save(entity) }
-        return true
     }
 
     private fun createFormDefFromCacheOrXml(xForm: File, formDefCache: FormDefCache): FormDef? {

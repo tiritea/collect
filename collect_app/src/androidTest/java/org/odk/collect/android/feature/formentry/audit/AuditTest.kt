@@ -13,15 +13,18 @@ import org.odk.collect.android.support.pages.FormEntryPage
 import org.odk.collect.android.support.pages.MainMenuPage
 import org.odk.collect.android.support.pages.ProjectSettingsPage
 import org.odk.collect.android.support.rules.CollectTestRule
+import org.odk.collect.android.support.rules.RecentAppsRule
 import org.odk.collect.android.support.rules.TestRuleChain
 
 @RunWith(AndroidJUnit4::class)
 class AuditTest {
 
     private val rule = CollectTestRule()
+    private val recentAppsRule = RecentAppsRule()
 
     @get:Rule
     val ruleChain: RuleChain = TestRuleChain.chain()
+        .around(recentAppsRule)
         .around(rule)
 
     @Test
@@ -64,7 +67,7 @@ class AuditTest {
         rule.startAtMainMenu()
             .copyForm("two-question-audit-track-changes.xml")
             .startBlankForm("One Question Audit Track Changes")
-            .fillOut(FormEntryPage.QuestionAndAnswer("What is your age", "31"))
+            .fillOut(FormEntryPage.QuestionAndAnswer("What is your age?", "31"))
             .clickOptionsIcon()
             .clickGeneralSettings()
 
@@ -78,7 +81,7 @@ class AuditTest {
         rule.startAtMainMenu()
             .copyForm("two-question-audit-track-changes.xml")
             .startBlankForm("One Question Audit Track Changes")
-            .fillOut(FormEntryPage.QuestionAndAnswer("What is your age", "31"))
+            .fillOut(FormEntryPage.QuestionAndAnswer("What is your age?", "31"))
             .swipeToNextQuestion("What is your name?")
             .fillOut(FormEntryPage.QuestionAndAnswer("What is your name?", "Adam"))
             .swipeToEndScreen()
@@ -104,8 +107,9 @@ class AuditTest {
             .pressBack(MainMenuPage())
             .startBlankForm("One Question Audit")
             .fillOut(FormEntryPage.QuestionAndAnswer("what is your age", "31"))
-            .killAndReopenApp(rule, MainMenuPage())
-            .startBlankForm("One Question Audit")
+            .killAndReopenApp(rule, recentAppsRule, MainMenuPage())
+            .startBlankFormWithSavepoint("One Question Audit")
+            .clickRecover(FormEntryPage("One Question Audit"))
             .swipeToEndScreen()
             .clickFinalize()
 

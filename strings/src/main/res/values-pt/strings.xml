@@ -47,14 +47,14 @@
   <string name="search">Procurar</string>
   <string name="not_granted_permission">A atividade que você está tentando iniciar exige uma permissão que você não concedeu.</string>
   <string name="storage_runtime_permission_denied_title">Permissões de armazenamento</string>
-  <string name="storage_runtime_permission_denied_desc">Sem estas permissões, o KoboCollect não pode acessar os seus formulários ou salvar formulários enviados. Abra o aplicativo novamente quando estiver pronto para conceder estas permissões.</string>
+  <string name="storage_runtime_permission_denied_desc">Sem estas permissões, o ODK Collect não pode acessar os seus formulários ou salvar formulários enviados. Abra o aplicativo novamente quando estiver pronto para conceder estas permissões.</string>
   <string name="location_runtime_permissions_denied_title">Permissões de localização</string>
-  <!--Starting in Android 12, Android makes it possible to give precise or approximate location permissions to an application. KoboCollect only captures location if the precise location permission is granted.-->
-  <string name="location_runtime_permissions_denied_desc">Sem a permissão de <b> Precise Location </b>, o KoboCollect não consegue registrar a sua localização. Por favor, tente novamente quando estiver pronto para conceder a permissão.</string>
+  <!--Starting in Android 12, Android makes it possible to give precise or approximate location permissions to an application. ODK Collect only captures location if the precise location permission is granted.-->
+  <string name="location_runtime_permissions_denied_desc">Sem a permissão de <b> Precise Location </b>, o ODK Collect não consegue registrar a sua localização. Por favor, tente novamente quando estiver pronto para conceder a permissão.</string>
   <string name="camera_runtime_permission_denied_title">Permissão de acesso à câmera</string>
-  <string name="camera_runtime_permission_denied_desc">Sem esta permissão, o KoboCollect não consegue acessar sua câmera. Por favor, tente novamente quando estiver pronto a concedê-la.</string>
+  <string name="camera_runtime_permission_denied_desc">Sem esta permissão, o ODK Collect não consegue acessar sua câmera. Por favor, tente novamente quando estiver pronto a concedê-la.</string>
   <string name="record_audio_runtime_permission_denied_title">Permissão de gravar áudio</string>
-  <string name="record_audio_runtime_permission_denied_desc">Sem esta permissão, o KoboCollect não consegue acessar seu microfone. Por favor, tente novamente quando estiver pronto a concedê-la.</string>
+  <string name="record_audio_runtime_permission_denied_desc">Sem esta permissão, o ODK Collect não consegue acessar seu microfone. Por favor, tente novamente quando estiver pronto a concedê-la.</string>
   <!--##############################################
     # FILL BLANK FORM
     ##############################################-->
@@ -175,6 +175,7 @@
   <string name="no_app">Aplicativo faltando. Por favor, inserir manualmente a informação</string>
   <string name="null_intent_value">A aplicação externa não enviou as informações esperadas.</string>
   <!--Text on button that is part of print questions. Tapping the button prints the value of the question.-->
+  <string name="print">Imprimir</string>
   <string name="launch_printer">Impressão Inicializada</string>
   <string name="no_printer">A impressora solicitada não está instalada. Por favor, instale a impressora</string>
   <string name="open_url">Abrir URL</string>
@@ -225,8 +226,10 @@
   <!--Description text for button that that resumes recording sound-->
   <string name="resume_recording">Continuar</string>
   <!--Displayed in the form filling menu when a form has background audio recording enabled-->
+  <string name="record_audio_on">Gravação de áudio: ligado</string>
   <!--Displayed in the form filling menu when a form has background audio recording disabled-->
-  <string name="background_audio_permission_explanation">Esse formulário grava áudio em segundo plano. Você precisa dar permissão de acesso ao microfone para o KoboCollect. Se não permitir isso, você não poderá abrir esse formulário.</string>
+  <string name="record_audio_off">Gravação de áudio: desligado</string>
+  <string name="background_audio_permission_explanation">Esse formulário grava áudio em segundo plano. Você precisa dar permissão de acesso ao microfone para o ODK Collect. Se não permitir isso, você não poderá abrir esse formulário.</string>
   <!--Text asking the user to confirm whether they want to stop recording or not (which deletes the recording file)-->
   <string name="stop_recording_confirmation">Esse formulário solicita gravação de áudio em segundo plano. Desabilitar isso irá interromper a gravação e descartar o áudio já gravado. Você tem certeza que deseja continuar?</string>
   <!--Button text for the dialog confirming whether the user wants to disable background recording-->
@@ -388,14 +391,30 @@
   <string name="google_play_services_error_occured">Não foi capaz de acessar o Google Maps. O serviço do Google Play está instalado?</string>
   <string name="carto_map_style_positron">Positron</string>
   <string name="carto_map_style_dark_matter">Matéria escura</string>
-  <string name="reference_layer">Camada de referência</string>
-  <string name="layer_data_file">Arquivo de dados da camada</string>
-  <string name="view_change_location">Ver ou modificar localização</string>
-  <string name="change_location">Mudar Localização</string>
+  <!--Title for the offline layer section of settings-->
+  <!--Label for the offline layer setting-->
+  <string name="layer_data_file">Camada</string>
+  <!--Title for the screen that allows the user to select a offline layer for maps-->
+  <!--Description of how to add offline layers to the project-->
+  <!--Text of button user can press to get help when setting up Offline Layers-->
+  <string name="get_help_with_offline_layers">Saber mais sobre adicionar MBTiles.</string>
+  <!--Text for button that lets the user select a offline layer on their device to add-->
+  <!--Text for button that lets the user delete a offline layer-->
+  <string name="delete_layer">Apagar camada</string>
+  <!--Text for title displayed in a dialog to inform that some/all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that some of the selected files are not MBTiles and they can't be imported-->
+  <!--Text for title above list of layers-->
+  <string name="layers_list_title">Camadas</string>
+  <!--Text for title and subtitle above options for how the layer can be access-->
+  <!--Text for option where layer should be available to all projects-->
+  <string name="all_projects_option">Todos os projetos</string>
+  <!--Text for option where layer should be available to the current project only-->
+  <string name="current_project_option">Apenas o projeto atual</string>
+  <!--Text for message displayed in a dialog to confirm that the layer should be deleted. The placeholder is the name of the layer as displayed in the list-->
   <string name="record_geopoint">Registre um ponto</string>
   <string name="location_accuracy">Precisão: %1$s m</string>
   <string name="location_provider">Provedor de localização: %s</string>
-  <string name="get_location">Gravar Localização</string>
   <string name="provider_disabled_error">Desculpe, provedor de localização desabilitado!</string>
   <string name="gps_result">Latitude: %1$s\nLongitude: %2$s\nAltitude: %3$sm\nPrecisão:%4$s m</string>
   <string name="google_play_services_not_available">Este formulário necessita rastrear sua localização, mas o Google Play Services não está disponível.</string>
@@ -403,17 +422,13 @@
   <!--Action to go to Android settings. Displayed when location providers are disabled.-->
   <string name="go_to_settings">Ir para as configurações</string>
   <!--Displayed in the form filling menu when a form has background location enabled-->
+  <string name="track_location_on">Rastrear localização: ligado</string>
   <!--Displayed in the form filling menu when a form has background location disabled-->
+  <string name="track_location_off">Rastrear localização: desligado</string>
   <string name="background_location_disabled">Este formulário necessita rastrear sua localização, mas a localização está desabilitada no seu celular. Por favor, habilite no menu %1$s acima.</string>
   <string name="background_location_enabled">Este formulário rastreia a sua localização. Você pode desabilitar o rastreamento de localização no menu %1$s acima.</string>
   <!--Text of an option available when filling out a form. Tapping this option checks the form for constraint or required violations and navigates the user back to the first field with an error.-->
   <string name="validate">Verificar erros</string>
-  <string name="get_point">Inicia GeoPoint</string>
-  <string name="geopoint_view_read_only">Visualiza GeoPoint</string>
-  <string name="geoshape_view_read_only">Visualizar GeoShape</string>
-  <string name="geotrace_view_read_only">Visualizar GeoTrace</string>
-  <string name="get_shape">Inicia GeoShape</string>
-  <string name="get_trace">Inicia GeoTrace</string>
   <!--%1$s is the time taken so far in hh:mm:ss-->
   <string name="time_elapsed">Tempo decorrido: %1$s</string>
   <!--%1$s is the accuracy required for a point to be automatically saved-->
@@ -442,7 +457,7 @@
   <string name="geotrace_title">GeoTrace</string>
   <string name="gps_enable_message">O GPS está desabilitado no seu dispositivo. Quer habilitá-lo?</string>
   <string name="geo_clear_warning">A feature já foi criada. Gostaria de limpar a feature?</string>
-  <string name="geo_exit_warning">Descartar mudanças e retornar ao KoboToolbox?</string>
+  <string name="geo_exit_warning">Descartar mudanças e retornar ao ODK?</string>
   <string name="polygon_validator">Precisa ter pelo menos 3 pontos para criar Polígono</string>
   <string name="polyline_validator">Precisa ter pelo menos 2 pontos para criar uma Cadeia de Linhas</string>
   <string name="clear">Limpar</string>
@@ -484,8 +499,6 @@
   <string name="geopoint_instruction">Pressione por mais tempo para colocar marcador ou selecione o botão Adicionar Marcador.</string>
   <string name="geopoint_no_draggable_instruction">Selecione o botão Adicionar Marcador.</string>
   <string name="discard">Descartar</string>
-  <string name="geoshape_view_change_location">Visualizar ou Modificar GeoShape</string>
-  <string name="geotrace_view_change_location">Visualizar ou Modificar GeoTrace</string>
   <string name="select_item_count">1 %s: 2 %d (2 %d mostrado no mapa)</string>
   <string name="select_item">Selecionar</string>
   <string name="new_item">Novo item</string>
@@ -496,8 +509,6 @@
   <string name="location_tracking_notification_channel_name">Registro de localização</string>
   <!--Title for notification that lets user know their location is currently being tracked-->
   <string name="location_tracking_notification_title">Obtendo localização…</string>
-  <!--Text of button user can press to get help when setting up Reference Layers-->
-  <string name="get_help_with_reference_layers">Obter ajuda com Camadas de Referência</string>
   <!--Description for button that zooms to the user's current location on a map-->
   <string name="show_my_location">Mostrar minha localização</string>
   <!--Description for button that zooms a map so that it shows all items-->
@@ -578,11 +589,8 @@
   <string name="delete_file">Apagar Selecionados</string>
   <string name="delete_no">Não Apagar</string>
   <string name="delete_yes">Apagar Formulários</string>
-  <string name="file_deleted_error">Desculpe, %1$s de %2$s formulário(s) selecionado falhou ao apagar!</string>
   <string name="form_delete_message">Apagando formulários selecionados</string>
-  <string name="deleting_form_dialog_update_message">Apagando formulário: %1$d de %2$d </string>
   <string name="file_deleted_ok">%s formulário(s) apagados com sucesso!</string>
-  <string name="file_delete_in_progress">Desculpe, uma ação de apagar está em andamento!</string>
   <!--##############################################
     # UNPROTECTED SETTINGS
     ##############################################-->
@@ -634,7 +642,7 @@
   <string name="change_server_url">Servidor URL</string>
   <string name="url_error">Desculpe, URL inválida!</string>
   <string name="username">Nome do usuário</string>
-  <string name="change_username">Usuário KoboToolbox</string>
+  <string name="change_username">Usuário ODK</string>
   <string name="password">Senha</string>
   <string name="change_password">Senha</string>
   <string name="password_error_whitespace">Espaços em branco antes e depois de senhas não são permitidos</string>
@@ -721,7 +729,7 @@
   <string name="instance_sync_summary">Afeta formulários adicionados diretamente na pasta instances.</string>
   <string name="analytics_preferences">Uso de dados</string>
   <string name="analytics">Coletar dados anonimamente</string>
-  <string name="analytics_summary">Dados anônimos de uso ajudam a equipe do KoboToolbox na priorização de correções de erros e funcionalidades.</string>
+  <string name="analytics_summary">Dados anônimos de uso ajudam a equipe do ODK na priorização de correções de erros e funcionalidades.</string>
   <string name="form_metadata_title">Metadados do Formulário</string>
   <string name="form_metadata">Metadados do Formulário</string>
   <string name="form_metadata_summary">Estes valores serão adicionados aos formulários que têm os campos usuário, e-mail e/ou telefone pré-determinados para identificar a pessoa que está enviando os dados.</string>
@@ -793,14 +801,14 @@
      # ABOUT
      ##############################################-->
   <string name="about_preferences">Sobre</string>
-  <string name="tell_your_friends">Compartilhar KoboCollect</string>
-  <string name="tell_your_friends_msg">Seus colegas ainda estão coletando dados em papel? Compartilhe o KoboCollect com eles.</string>
+  <string name="tell_your_friends">Compartilhar ODK Collect</string>
+  <string name="tell_your_friends_msg">Seus colegas ainda estão coletando dados em papel? Compartilhe o ODK Collect com eles.</string>
   <string name="leave_a_review">Deixe um opinião sua na Play Store</string>
   <string name="leave_a_review_msg">A sua opinião (possivelmente positiva) aumenta a visibilidade da App na Play Store.</string>
-  <string name="odk_website">Visite o site KoboToolbox</string>
-  <string name="odk_website_summary">KoboCollect is part of KoboToolbox and based on ODK Collect.</string>
-  <string name="odk_forum">Junte-se ao fórum KoboToolbox</string>
-  <string name="odk_forum_summary">Join the forum to get support and connect with other users!</string>
+  <string name="odk_website">Visite o site ODK</string>
+  <string name="odk_website_summary">ODK é usado para coleta de dados pelo bem comum em ambientes desafiadores.</string>
+  <string name="odk_forum">Junte-se ao fórum ODK</string>
+  <string name="odk_forum_summary">Junte-se ao fórum para obter suporte, requisitar funcionalidades, contribuir com o código/traduções!</string>
   <string name="all_open_source_licenses">Bibliotecas/licenças open source</string>
   <string name="all_open_source_licenses_msg">Nós estamos nos ombros dos gigantes!</string>
   <!--##############################################
@@ -848,7 +856,7 @@
   <string name="fs_create_media_folder_error">Não foi possível criar a pasta de mídia \'%s\'.</string>
   <string name="fs_file_copy_error">Não foi possível copiar os dados de \'%1$s\' para \'%2$s\'.. Motivo: %3$s</string>
   <string name="survey_multiple_forms_error">Dois formulários foram descarregados com a mesma identificação e versão. Talvez eles sejam os mesmos formulários carregados várias vezes ou junto a servidores diferentes. De todo modo, um deles deve ser apagado.</string>
-  <string name="select_odk_shortcut">Selecionar o Atalho KoboToolbox</string>
+  <string name="select_odk_shortcut">Selecionar o Atalho ODK</string>
   <string name="background_audio_help">Esse formulário grava áudio do microfone do seu dispositivo.\n\nVocê pode usar o indicador de volume para garantir que o microfone esteja próximo o suficiente do som que você precisa gravar.\n\nPara parar a gravação, por favor, saia desse formulário.\n\nPara mais informações, por favor entre em contato com a pessoa que solicitou que você coletasse dados.</string>
   <string name="loading">Carregando…</string>
   <!--##############################################
@@ -901,9 +909,9 @@
   <string name="try_demo">Tente a demonstração</string>
   <string name="scan_configuration_qr_code">Ler o QR Code de configuração</string>
   <!--Error shown when a user tries to open a form that's in a different project-->
-  <string name="wrong_project_selected_for_form">Para abrir esse formulário, você deve primeiro abrir o KoboCollect e alternar para o projeto que o contém.</string>
+  <string name="wrong_project_selected_for_form">Para abrir esse formulário, você deve primeiro abrir o ODK Collect e alternar para o projeto que o contém.</string>
   <!--Error shown when a user tries to open a form when there are no projects-->
-  <string name="app_not_configured">O KoboCollect não foi configurado. Tente abrir o KoboCollect e configurá-lo;\n\nSe você clicou em um atalho, você pode precisar recriá-lo depois de configurar o KoboCollect.</string>
+  <string name="app_not_configured">O ODK Collect não foi configurado. Tente abrir o ODK Collect e configurá-lo;\n\nSe você clicou em um atalho, você pode precisar recriá-lo depois de configurar o ODK Collect.</string>
   <!--##############################################
     # Errors
     ##############################################-->
@@ -915,6 +923,15 @@
   <string name="open_settings">Abrir configurações</string>
   <!--An entity is any person, place or thing that a form can be about. This title appears on an experimental settings screen to view entities managed in the current project.-->
   <string name="entities_title">Entidades</string>
+  <!--Title for setting that controls whether local entity features are enabled or not-->
+  <string name="include_local_entities_setting">Habilitar entidades locais</string>
+  <!--Text for button that leads to browser for the user to view and manage entity lists-->
+  <string name="entity_browser_button">Ver listas de entidades</string>
+  <!--Text for button that deletes all entities for the project-->
+  <string name="clear_entities">Limpar tudo</string>
+  <!--Text for button that adds a new entity list-->
+  <string name="add_entity_list">Adicionar lista de entidades</string>
+  <!--Label for entity that has been created offline and is not on the server yet-->
   <!--##############################################
     # Crash handling
     ##############################################-->
@@ -931,10 +948,10 @@
   <string name="dev_tools">Ferramentas de desenvolvedor</string>
   <!--Option provided in the Developer tools settings to force an application crash-->
   <string name="crash_app">Forçar a quebra do aplicativo</string>
-  <!--An uncaught exception is an exception that is not handled by KoboCollect and so will force the application to close-->
+  <!--An uncaught exception is an exception that is not handled by ODK Collect and so will force the application to close-->
   <string name="crash_app_summary">Forçar uma exceção não tratada causando a quebra do aplicativo</string>
   <string name="permission_dialog_title">Sobre permissões</string>
-  <string name="permission_dialog_text">Você deverá permitir que o KoboCollect tenha acesso às configurações abaixo, selecione \"permitir\" se você deseja usá-las.</string>
+  <string name="permission_dialog_text">Você deverá permitir que o ODK Collect tenha acesso às configurações abaixo, selecione \"permitir\" se você deseja usá-las.</string>
   <string name="notifications">Notificações</string>
   <string name="required_for_notifications">Requerido para mostrar atualizações quando o formulário é baixado, atualizado e enviado.</string>
   <!--##############################################
@@ -1016,7 +1033,9 @@
   <!--Message displayed when the list of questions is empty-->
   <string name="empty_list_of_questions">Não há nada para exibir</string>
   <!--Message displayed when the list of blank forms is empty-->
+  <string name="empty_list_of_blank_forms_title">Não há formulários em branco</string>
   <!--Subtext displayed when the list of blank forms is empty-->
+  <string name="empty_list_of_blank_forms_subtitle">Baixe o formulário para começar</string>
   <!--Message displayed when the list of drafts is empty-->
   <string name="empty_list_of_drafts_title">Não há nada em rascunhos</string>
   <!--Subtext displayed when the list of drafts is empty-->
@@ -1030,7 +1049,42 @@
   <!--Subtext of message displayed when the list of sent forms is empty-->
   <string name="empty_list_of_sent_forms_subtitle">Quando você enviar formulários finalizados eles aparecerão aqui</string>
   <!--Message displayed when the list of forms to download is empty-->
+  <string name="empty_list_of_forms_to_download_title">Não há formulários para baixar</string>
+  <string name="empty_list_of_forms_to_download_subtitle">Baixe o formulário para começar</string>
   <!--Message displayed when the list of forms to delete is empty-->
+  <string name="empty_list_of_forms_to_delete_title">Não há formulários para apagar</string>
   <!--Subtext displayed when the list of blank forms to delete is empty-->
+  <string name="empty_list_of_blank_forms_to_delete_subtitle">Quando você tiver baixado formulários em branco, eles aparecerão aqui</string>
   <!--Subtext displayed when the list of filled forms to delete is empty-->
+  <string name="empty_list_of_saved_forms_to_delete_subtitle">Quando você tiver formulários salvos, eles aparecerão aqui</string>
+  <!--##############################################
+    # Savepoint recovery dialog
+    ##############################################-->
+  <!--Title displayed in a dialog before starting a form if there is a work to recover-->
+  <string name="savepoint_recovery_dialog_title">Recuperar o seu trabalho?</string>
+  <!--Message displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Text for the button that accepts the recovery of the work-->
+  <string name="recover">Recuperar</string>
+  <!--Text for the button that declines the recovery of the work-->
+  <string name="do_not_recover">Descartar</string>
+  <!--Text for the button that initiates getting user location-->
+  <string name="get_point">Obter ponto</string>
+  <!--Text for the button that displays a map for viewing or changing an already existing location-->
+  <string name="view_or_change_point">Ver ou modificar o ponto</string>
+  <!--Text for the button that displays a map for viewing an already existing location-->
+  <string name="view_point">Visualizar ponto</string>
+  <!--Text for the button that initiates getting user location when one is already present-->
+  <string name="change_point">Alterar ponto</string>
+  <!--Text for the button that displays a map for getting a new line-->
+  <string name="get_line">Obter linha</string>
+  <!--Text for the button that displays a map for viewing or changing an already existing line-->
+  <string name="view_or_change_line">Ver ou modificar linha</string>
+  <!--Text for the button that displays a map for viewing an already existing line-->
+  <string name="view_line">Visualizar linha</string>
+  <!--Text for the button that displays a map for getting a new polygon-->
+  <string name="get_polygon">Obter polígono</string>
+  <!--Text for the button that displays a map for viewing or changing an already existing polygon-->
+  <string name="view_or_change_polygon">Ver ou modificar polígono</string>
+  <!--Text for the button that displays a map for viewing an already existing polygon-->
+  <string name="view_polygon">Visualizar polígono</string>
 </resources>

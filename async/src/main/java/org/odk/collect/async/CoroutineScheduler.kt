@@ -20,8 +20,8 @@ open class CoroutineScheduler(private val foregroundContext: CoroutineContext, p
         }
     }
 
-    override fun immediate(background: Boolean, runnable: Runnable) {
-        val context = if (background) {
+    override fun immediate(foreground: Boolean, runnable: Runnable) {
+        val context = if (!foreground) {
             backgroundContext
         } else {
             foregroundContext
@@ -53,11 +53,11 @@ open class CoroutineScheduler(private val foregroundContext: CoroutineContext, p
         throw UnsupportedOperationException()
     }
 
-    override fun networkDeferred(tag: String, spec: TaskSpec, inputData: Map<String, String>) {
+    override fun networkDeferred(tag: String, spec: TaskSpec, inputData: Map<String, String>, networkConstraint: Scheduler.NetworkType?) {
         throw UnsupportedOperationException()
     }
 
-    override fun networkDeferred(tag: String, spec: TaskSpec, repeatPeriod: Long, inputData: Map<String, String>) {
+    override fun networkDeferredRepeat(tag: String, spec: TaskSpec, repeatPeriod: Long, inputData: Map<String, String>) {
         throw UnsupportedOperationException()
     }
 

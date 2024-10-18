@@ -130,7 +130,7 @@ the specific language governing permissions and limitations under the License.
             android:name=".formlists.blankformlist.BlankFormListActivity"
             android:launchMode="singleTop" />
         <activity android:name=".activities.FormDownloadListActivity" />
-        <activity android:name=".activities.DeleteSavedFormActivity" />
+        <activity android:name=".activities.DeleteFormsActivity" />
         <activity
             android:name=".instancemanagement.send.InstanceUploaderListActivity"
             android:configChanges="orientation|screenSize" />
@@ -166,7 +166,7 @@ the specific language governing permissions and limitations under the License.
 
         <activity android:name=".activities.FormMapActivity" />
         <activity android:name=".activities.BearingActivity" />
-        <activity android:name=".activities.WebViewActivity" />
+        <activity android:name="org.odk.collect.webpage.WebViewActivity" />
         <activity
             android:name="org.odk.collect.selfiecamera.CaptureSelfieActivity"
             android:theme="@style/Theme.Collect"

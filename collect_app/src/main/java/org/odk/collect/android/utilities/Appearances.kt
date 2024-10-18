@@ -16,10 +16,10 @@
 package org.odk.collect.android.utilities
 
 import android.content.res.Configuration
+import org.javarosa.core.model.Constants
 import org.javarosa.form.api.FormEntryPrompt
 import org.odk.collect.android.dynamicpreload.ExternalDataUtil
 import org.odk.collect.androidshared.utils.ScreenUtils
-import java.lang.Exception
 
 object Appearances {
     // Date appearances
@@ -87,6 +87,7 @@ object Appearances {
     const val NUMBERS = "numbers"
     const val URL = "url"
     const val RATING = "rating"
+    const val MASKED = "masked"
 
     // Get appearance hint and clean it up so it is lower case, without the search function and never null.
     @JvmStatic
@@ -169,7 +170,7 @@ object Appearances {
 
     @JvmStatic
     fun useThousandSeparator(prompt: FormEntryPrompt): Boolean {
-        return getSanitizedAppearanceHint(prompt).contains(THOUSANDS_SEP)
+        return getSanitizedAppearanceHint(prompt).contains(THOUSANDS_SEP) && !isMasked(prompt)
     }
 
     @JvmStatic
@@ -189,5 +190,13 @@ object Appearances {
     fun isAutocomplete(prompt: FormEntryPrompt): Boolean {
         val appearance = getSanitizedAppearanceHint(prompt)
         return appearance.contains(SEARCH) || appearance.contains(AUTOCOMPLETE)
+    }
+
+    @JvmStatic
+    fun isMasked(prompt: FormEntryPrompt): Boolean {
+        val appearance = getSanitizedAppearanceHint(prompt)
+        return appearance.contains(MASKED) &&
+            !appearance.contains(NUMBERS) &&
+            prompt.dataType == Constants.DATATYPE_TEXT
     }
 }

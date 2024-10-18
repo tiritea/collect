@@ -151,8 +151,6 @@
   <!--TODO(ping): Delete these openmap_* strings when we're ready to move on from OSMDroid.
    These strings are only being used to preserve compatibility with pre-existing
     tile caches, and are not shown in the UI.-->
-  <string name="view_change_location">مقام کو ملاحظہ کریں یا تبدیلکریں۔</string>
-  <string name="get_location">مقام درج کریں</string>
   <string name="provider_disabled_error">معافی، مقام فراہم کرنے والے نااہل کئے گئے ہیں</string>
   <!--Action to go to Android settings. Displayed when location providers are disabled.-->
   <!--Label for a menu item that can be toggled to turn background location tracking on and off during form filling-->
@@ -223,9 +221,7 @@
   <string name="delete_file">منتخب شدہ کو مٹادیں</string>
   <string name="delete_no">نہ مٹا ئیں</string>
   <string name="delete_yes">فارم کو مٹا دیں</string>
-  <string name="file_deleted_error">منتخب شدہ ‎%1$s‏ فارم(ز) کا ‎%2$s‏ نہ مٹ سکا</string>
-  <string name="file_deleted_ok">فارم ‎%s‏ کامیابی سے مٹادئے گئے</string>
-  <string name="file_delete_in_progress">معافی، فارم مٹانے کا عمل پہلے سے جاری ہے</string>
+    <string name="file_deleted_ok">فارم ‎%s‏ کامیابی سے مٹادئے گئے</string>
   <!--##############################################
     # UNPROTECTED SETTINGS
     ##############################################-->

@@ -479,15 +479,58 @@
     <string name="carto_map_style_positron">Positron</string>
     <string name="carto_map_style_dark_matter">Dark Matter</string>
 
-    <string name="reference_layer">Reference layer</string>
-    <string name="layer_data_file">Layer data file</string>
+    <!-- Title for the offline layer section of settings-->
+    <string name="offline_layer">Offline layers</string>
 
-    <string name="view_change_location">View or Change Location</string>
-    <string name="change_location">Change Location</string>
+    <!-- Label for the offline layer setting -->
+    <string name="layer_data_file">Layer</string>
+
+    <!-- Title for the screen that allows the user to select a offline layer for maps -->
+    <string name="offline_layer_dialog_title">Select offline layer</string>
+
+    <!-- Description of how to add offline layers to the project -->
+    <string name="offline_layer_dialog_description">Select the offline layer to use for all maps in this project. You can add options to the list by selecting an MBTiles file from your device and also delete existing layers from the list.</string>
+
+    <!-- Text of button user can press to get help when setting up Offline Layers -->
+    <string name="get_help_with_offline_layers">Learn more about adding MBTiles.</string>
+
+    <!-- Text for button that lets the user select a offline layer on their device to add -->
+    <string name="add_layer">Add layers</string>
+
+    <!-- Text for button that lets the user delete a offline layer -->
+    <string name="delete_layer">Delete layer</string>
+
+    <!-- Text for title displayed in a dialog to inform that some/all the selected files are not MBTiles and they can't be imported -->
+    <plurals name="non_mbtiles_files_selected_title">
+        <item quantity="one">%d layer can\'t be added</item>
+        <item quantity="other">%d layers can\'t be added</item>
+    </plurals>
+
+    <!-- Text for message displayed in a dialog to inform that all the selected files are not MBTiles and they can't be imported -->
+    <string name="all_non_mbtiles_files_selected_message">The files you selected are not MBTiles. You can only add MBTiles files.</string>
+
+    <!-- Text for message displayed in a dialog to inform that some of the selected files are not MBTiles and they can't be imported -->
+    <string name="some_non_mbtiles_files_selected_message">Some of the files you selected are not MBTiles. You can only add MBTiles files.</string>
+
+    <!-- Text for title above list of layers -->
+    <string name="layers_list_title">Layers</string>
+
+    <!-- Text for title and subtitle above options for how the layer can be access -->
+    <string name="select_layer_access_title">Select layers access</string>
+    <string name="select_layer_access_subtitle">Do you want the layers available in all projects or your current project only?</string>
+
+    <!-- Text for option where layer should be available to all projects -->
+    <string name="all_projects_option">All projects</string>
+
+    <!-- Text for option where layer should be available to the current project only -->
+    <string name="current_project_option">Current project only</string>
+
+    <!-- Text for message displayed in a dialog to confirm that the layer should be deleted. The placeholder is the name of the layer as displayed in the list -->
+    <string name="delete_layer_confirmation_message">Are you sure you want to delete the %1$s offline layer?</string>
+
     <string name="record_geopoint">Record a point</string>
     <string name="location_accuracy">Accuracy: %1$s m</string>
     <string name="location_provider">Location provider: %s</string>
-    <string name="get_location">Record Location</string>
     <string name="provider_disabled_error">Sorry, Location providers are disabled!</string>
     <string name="gps_result">Latitude: %1$s\nLongitude: %2$s\nAltitude: %3$sm\nAccuracy: %4$sm</string>
     <string name="google_play_services_not_available">This form wants to track your location but Google Play Services are not available.</string>
@@ -503,13 +546,6 @@
 
     <!-- Text of an option available when filling out a form. Tapping this option checks the form for constraint or required violations and navigates the user back to the first field with an error. -->
     <string name="validate">Check for errors</string>
-
-    <string name="get_point">Start GeoPoint</string>
-    <string name="geopoint_view_read_only">View GeoPoint</string>
-    <string name="geoshape_view_read_only">View GeoShape</string>
-    <string name="geotrace_view_read_only">View GeoTrace</string>
-    <string name="get_shape">Start GeoShape</string>
-    <string name="get_trace">Start GeoTrace</string>
 
     <!-- %1$s is the time taken so far in hh:mm:ss -->
     <string name="time_elapsed">Time elapsed: %1$s</string>
@@ -584,8 +620,6 @@
     <string name="geopoint_instruction">Long press to place mark or tap add marker button.</string>
     <string name="geopoint_no_draggable_instruction">Tap add marker button.</string>
     <string name="discard">Discard</string>
-    <string name="geoshape_view_change_location">View or Change GeoShape</string>
-    <string name="geotrace_view_change_location">View or Change GeoTrace</string>
     <string name="select_item_count">%s: %d (%d shown on map)</string>
     <string name="select_item">Select</string>
     <string name="new_item">New item</string>
@@ -598,9 +632,6 @@
 
     <!-- Title for notification that lets user know their location is currently being tracked -->
     <string name="location_tracking_notification_title">Tracking location…</string>
-
-    <!-- Text of button user can press to get help when setting up Reference Layers -->
-    <string name="get_help_with_reference_layers">Get help with Reference Layers</string>
 
     <!-- Description for button that zooms to the user's current location on a map -->
     <string name="show_my_location">Show my location</string>
@@ -720,11 +751,8 @@
     <string name="delete_file">Delete Selected</string>
     <string name="delete_no">Do Not Delete</string>
     <string name="delete_yes">Delete Forms</string>
-    <string name="file_deleted_error">Sorry, %1$s of %2$s selected form(s) failed to delete!</string>
     <string name="form_delete_message">Deleting selected forms</string>
-    <string name="deleting_form_dialog_update_message">Deleting form: %1$d out of %2$d </string>
     <string name="file_deleted_ok">%s form(s) successfully deleted!</string>
-    <string name="file_delete_in_progress">Sorry, a form delete action is already in progress!</string>
 
     <!--
     ##############################################
@@ -1122,6 +1150,23 @@
     <!-- An entity is any person, place or thing that a form can be about. This title appears on an experimental settings screen to view entities managed in the current project. -->
     <string name="entities_title">Entities</string>
 
+    <!-- Title for setting that controls whether local entity features are enabled or not -->
+    <string name="include_local_entities_setting">Enable local entities</string>
+
+    <string name="local_entity_features_summary">Follow up forms will have consistent entity lists and will include locally created or updated entities.</string>
+
+    <!-- Text for button that leads to browser for the user to view and manage entity lists -->
+    <string name="entity_browser_button">View entity lists</string>
+
+    <!-- Text for button that deletes all entities for the project -->
+    <string name="clear_entities">Clear all</string>
+
+    <!-- Text for button that adds a new entity list -->
+    <string name="add_entity_list">Add entity list</string>
+
+    <!-- Label for entity that has been created offline and is not on the server yet -->
+    <string name="offline">Offline</string>
+
     <!--
     ##############################################
     # Crash handling
@@ -1276,4 +1321,39 @@
     <string name="empty_list_of_blank_forms_to_delete_subtitle">When you have downloaded blank forms, they will appear here</string>
     <!-- Subtext displayed when the list of filled forms to delete is empty -->
     <string name="empty_list_of_saved_forms_to_delete_subtitle">When you have saved forms, they will appear here</string>
+
+    <!--
+    ##############################################
+    # Savepoint recovery dialog
+    ##############################################
+    -->
+    <!-- Title displayed in a dialog before starting a form if there is a work to recover -->
+    <string name="savepoint_recovery_dialog_title">Recover your work?</string>
+    <!-- Message displayed in a dialog before starting a form if there is a work to recover -->
+    <string name="savepoint_recovery_dialog_message">\'Collect closed unexpectedly on \'EEE, MMM dd, yyyy \'at\' HH:mm\' and saved your work.\n\nWould you like to recover or discard it?\'</string>
+    <!-- Text for the button that accepts the recovery of the work -->
+    <string name="recover">Recover</string>
+    <!-- Text for the button that declines the recovery of the work -->
+    <string name="do_not_recover">Discard</string>
+
+    <!-- Text for the button that initiates getting user location -->
+    <string name="get_point">Get point</string>
+    <!-- Text for the button that displays a map for viewing or changing an already existing location -->
+    <string name="view_or_change_point">View or change point</string>
+    <!-- Text for the button that displays a map for viewing an already existing location -->
+    <string name="view_point">View point</string>
+    <!-- Text for the button that initiates getting user location when one is already present -->
+    <string name="change_point">Change point</string>
+    <!-- Text for the button that displays a map for getting a new line -->
+    <string name="get_line">Get line</string>
+    <!-- Text for the button that displays a map for viewing or changing an already existing line -->
+    <string name="view_or_change_line">View or change line</string>
+    <!-- Text for the button that displays a map for viewing an already existing line -->
+    <string name="view_line">View line</string>
+    <!-- Text for the button that displays a map for getting a new polygon -->
+    <string name="get_polygon">Get polygon</string>
+    <!-- Text for the button that displays a map for viewing or changing an already existing polygon -->
+    <string name="view_or_change_polygon">View or change polygon</string>
+    <!-- Text for the button that displays a map for viewing an already existing polygon -->
+    <string name="view_polygon">View polygon</string>
 </resources>

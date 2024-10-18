@@ -59,9 +59,11 @@
         <item name="colorOutline">@color/color_on_surface_medium_emphasis</item>
         <item name="colorErrorContainer">@color/colorErrorContainer</item>
         <item name="colorOnErrorContainer">@color/colorOnErrorContainer</item>
-        <item name="elevationOverlayColor">@color/elevationOverlayColor</item>
+        <item name="colorSurfaceContainerLowest">@color/colorSurfaceContainerLowest</item>
         <item name="colorSurfaceContainerLow">@color/colorSurfaceContainerLow</item>
-        <item name="colorSurfaceContainerHighest">@color/color_primary_low_emphasis</item>
+        <item name="colorSurfaceContainer">@color/colorSurfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/colorSurfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/colorSurfaceContainerHighest</item>
         <item name="textAppearanceDisplayLarge">@style/TextAppearance.Material3.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/TextAppearance.Material3.DisplayMedium
         </item>
@@ -98,9 +100,10 @@
         <item name="materialButtonOutlinedStyle">@style/Widget.Collect.Button.OutlinedButton</item>
         <item name="borderlessButtonStyle">@style/Widget.Collect.Button.TextButton</item>
         <item name="materialAlertDialogTheme">@style/Theme.Collect.Dialog.Alert</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Collect.BottomSheet</item>
 
         <!-- Custom style for buttons used in question widgets -->
-        <item name="widgetButtonQuestionWidgetStyle">@style/Widget.Collect.Button.QuestionWidget</item>
+        <item name="widgetButtonIconQuestionWidgetStyle">@style/Widget.Collect.Button.Icon.QuestionWidget</item>
 
         <!-- Custom theme text appearance for larger buttons -->
         <item name="textAppearanceLabelExtraLarge">@style/TextAppearance.Collect.LabelExtraLarge</item>
@@ -146,5 +149,9 @@
 
     <style name="Widget.Collect.SearchView.NoIcon" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
+    </style>
+
+    <style name="Theme.Collect.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="materialButtonStyle">@style/Widget.Collect.Button</item>
     </style>
 </resources>

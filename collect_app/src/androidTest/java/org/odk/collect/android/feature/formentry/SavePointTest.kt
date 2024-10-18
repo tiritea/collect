@@ -13,15 +13,19 @@ import org.odk.collect.android.support.pages.FormEntryPage
 import org.odk.collect.android.support.pages.FormHierarchyPage
 import org.odk.collect.android.support.pages.SaveOrDiscardFormDialog
 import org.odk.collect.android.support.rules.FormEntryActivityTestRule
+import org.odk.collect.android.support.rules.RecentAppsRule
 import org.odk.collect.android.support.rules.TestRuleChain
 
 @RunWith(AndroidJUnit4::class)
 class SavePointTest {
 
     private val rule = FormEntryActivityTestRule()
+    private val recentAppsRule = RecentAppsRule()
 
     @get:Rule
-    val ruleChain: RuleChain = TestRuleChain.chain().around(rule)
+    val ruleChain: RuleChain = TestRuleChain.chain()
+        .around(recentAppsRule)
+        .around(rule)
 
     @Test
     fun savePointIsCreatedWhenMovingForwardInForm() {
@@ -34,7 +38,8 @@ class SavePointTest {
             .let { simulateBatteryDeath() }
 
         // Start blank form and check save point is loaded
-        rule.fillNewForm("two-question-audit.xml", FormHierarchyPage("Two Question"))
+        rule.fillNewFormWithSavepoint("two-question-audit.xml")
+            .clickRecover(FormHierarchyPage("Two Question"))
             .assertText("Alexei")
             .assertTextDoesNotExist("46")
             .pressBack(FormEntryPage("Two Question"))
@@ -78,7 +83,8 @@ class SavePointTest {
             .let { simulateBatteryDeath() }
 
         // Edit instance and check save point is loaded
-        rule.editForm("two-question-audit.xml", "Two Question")
+        rule.editFormWithSavepoint("two-question-audit.xml")
+            .clickRecover(FormHierarchyPage("Two Question"))
             .assertText("Alexei")
             .assertText("52")
             .assertTextDoesNotExist("46")
@@ -110,10 +116,12 @@ class SavePointTest {
         rule.setUpProjectAndCopyForm("two-question-audit.xml", listOf("external_data_10.zip"))
             .fillNewForm("two-question-audit.xml", "Two Question")
             .answerQuestion("What is your name?", "Alexei")
-            .let { simulateProcessDeath() }
+
+        recentAppsRule.leaveAndKillApp()
 
         // Start blank form and check save point is loaded
-        rule.fillNewForm("two-question-audit.xml", FormHierarchyPage("Two Question"))
+        rule.fillNewFormWithSavepoint("two-question-audit.xml")
+            .clickRecover(FormHierarchyPage("Two Question"))
             .assertText("Alexei")
             .pressBack(FormEntryPage("Two Question"))
             .closeSoftKeyboard()
@@ -150,10 +158,12 @@ class SavePointTest {
         rule.editForm("two-question-audit.xml", "Two Question")
             .clickGoToStart()
             .answerQuestion("What is your name?", "Alexei")
-            .let { simulateProcessDeath() }
+
+        recentAppsRule.leaveAndKillApp()
 
         // Edit instance and check save point is loaded
-        rule.editForm("two-question-audit.xml", "Two Question")
+        rule.editFormWithSavepoint("two-question-audit.xml")
+            .clickRecover(FormHierarchyPage("Two Question"))
             .assertText("Alexei")
             .assertText("52")
             .pressBack(FormEntryPage("Two Question"))
@@ -191,7 +201,8 @@ class SavePointTest {
         // Create save point for blank form
         rule.fillNewForm("two-question-audit.xml", "Two Question")
             .answerQuestion("What is your name?", "Alexei")
-            .let { simulateProcessDeath() }
+
+        recentAppsRule.leaveAndKillApp()
 
         // Check editing instance doesn't load save point
         rule.editForm("two-question-audit.xml", "Two Question")
@@ -215,10 +226,34 @@ class SavePointTest {
         rule.editForm("two-question-audit.xml", "Two Question")
             .clickGoToStart()
             .answerQuestion("What is your name?", "Alexei")
-            .let { simulateProcessDeath() }
+
+        recentAppsRule.leaveAndKillApp()
 
         // Check starting blank form does not load save point
         rule.fillNewForm("two-question-audit.xml", "Two Question")
+    }
+
+    @Test // https://github.com/getodk/collect/pull/6058
+    fun whenBlankFormStartedThenSavedAndKilled_aSavepointShouldBeCreatedForASavedFormNotForTheBlankOne() {
+        // Start blank form, save it and create a savepoint
+        rule.setUpProjectAndCopyForm("two-question.xml")
+            .fillNewForm("two-question.xml", "Two Question")
+            .answerQuestion("What is your name?", "Alexei")
+            .clickSave()
+            .swipeToNextQuestion("What is your age?")
+            .answerQuestion("What is your age?", "46")
+
+        recentAppsRule.leaveAndKillApp()
+
+        // Start blank form and check save point is not loaded
+        rule.fillNewForm("two-question.xml", "Two Question")
+            .pressBackAndDiscardForm(AppClosedPage())
+
+        // Edit saved form and check save point is loaded
+        rule.editFormWithSavepoint("two-question.xml")
+            .clickRecover(FormHierarchyPage("Two Question"))
+            .assertText("Alexei")
+            .assertText("46")
     }
 
     /**
@@ -227,14 +262,5 @@ class SavePointTest {
      */
     private fun simulateBatteryDeath(): FormEntryActivityTestRule {
         return rule.simulateProcessRestart()
-    }
-
-    /**
-     * Simulate a "process death" case where an app in the background is killed
-     */
-    private fun simulateProcessDeath(): FormEntryActivityTestRule {
-        return rule.navigateAwayFromActivity()
-            .destroyActivity()
-            .simulateProcessRestart()
     }
 }

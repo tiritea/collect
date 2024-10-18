@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.odk.collect.android.databinding.RangePickerWidgetAnswerBinding;
 import org.odk.collect.android.fragments.dialogs.NumberPickerDialog;
 import org.odk.collect.android.support.CollectHelpers;
+import org.odk.collect.android.support.MockFormEntryPromptBuilder;
 import org.odk.collect.android.support.WidgetTestActivity;
 import org.odk.collect.android.views.TrackingTouchSlider;
 import org.odk.collect.testshared.RobolectricHelpers;
@@ -178,9 +179,12 @@ public class RangeWidgetUtilsTest {
 
     @Test
     public void setUpLayoutElements_forVerticalSliderWidget_shouldShowCorrectSlider() {
-        when(rangeQuestion.getAppearanceAttr()).thenReturn(VERTICAL_APPEARANCE);
+        FormEntryPrompt prompt = new MockFormEntryPromptBuilder()
+                .withQuestion(rangeQuestion)
+                .withAppearance(VERTICAL_APPEARANCE)
+                .build();
         RangeWidgetUtils.RangeWidgetLayoutElements layoutElements = RangeWidgetUtils.setUpLayoutElements(
-                widgetTestActivity(), promptWithReadOnlyAndQuestionDef(rangeQuestion));
+                widgetTestActivity(), prompt);
         assertThat(layoutElements.getSlider().getRotation(), equalTo(270.0F));
     }
 
@@ -241,7 +245,7 @@ public class RangeWidgetUtilsTest {
     @Test
     public void clickingPickerButton_showsNumberPickerDialog() {
         WidgetTestActivity activity = CollectHelpers.createThemedActivity(WidgetTestActivity.class);
-        RangeWidgetUtils.showNumberPickerDialog(activity, new String[]{}, 0, 0);
+        RangeWidgetUtils.showNumberPickerDialog(activity, new String[]{"1", "2", "3"}, 0, 0);
         RobolectricHelpers.runLooper();
         NumberPickerDialog numberPickerDialog = (NumberPickerDialog) activity.getSupportFragmentManager()
                 .findFragmentByTag(NumberPickerDialog.NUMBER_PICKER_DIALOG_TAG);

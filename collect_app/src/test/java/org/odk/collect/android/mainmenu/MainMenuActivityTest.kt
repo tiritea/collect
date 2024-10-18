@@ -25,14 +25,14 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.odk.collect.android.R
 import org.odk.collect.android.activities.CrashHandlerActivity
-import org.odk.collect.android.activities.DeleteSavedFormActivity
+import org.odk.collect.android.activities.DeleteFormsActivity
 import org.odk.collect.android.activities.FormDownloadListActivity
 import org.odk.collect.android.activities.InstanceChooserList
 import org.odk.collect.android.application.initialization.AnalyticsInitializer
 import org.odk.collect.android.fakes.FakePermissionsProvider
 import org.odk.collect.android.formlists.blankformlist.BlankFormListActivity
-import org.odk.collect.android.formmanagement.InstancesDataService
 import org.odk.collect.android.injection.config.AppDependencyModule
+import org.odk.collect.android.instancemanagement.InstancesDataService
 import org.odk.collect.android.instancemanagement.autosend.AutoSendSettingsProvider
 import org.odk.collect.android.instancemanagement.send.InstanceUploaderListActivity
 import org.odk.collect.android.projects.ProjectsDataService
@@ -61,6 +61,7 @@ class MainMenuActivityTest {
         on { sendableInstancesCount } doReturn MutableLiveData(0)
         on { sentInstancesCount } doReturn MutableLiveData(0)
         on { editableInstancesCount } doReturn MutableLiveData(0)
+        on { savedForm } doReturn MutableLiveData()
     }
 
     private val currentProjectViewModel = mock<CurrentProjectViewModel> {
@@ -68,7 +69,7 @@ class MainMenuActivityTest {
         on { currentProject } doReturn MutableNonNullLiveData(project)
     }
 
-    private val permissionsViewModel = mock<RequestPermissionsViewModel>() {
+    private val permissionsViewModel = mock<RequestPermissionsViewModel> {
         on { shouldAskForPermissions() } doReturn false
     }
 
@@ -102,7 +103,6 @@ class MainMenuActivityTest {
                     instancesDataService,
                     scheduler,
                     projectsDataService,
-                    analyticsInitializer,
                     permissionChecker,
                     formsRepositoryProvider,
                     instancesRepositoryProvider,
@@ -305,7 +305,7 @@ class MainMenuActivityTest {
             button.performClick()
             assertThat(
                 Intents.getIntents()[0],
-                hasComponent(DeleteSavedFormActivity::class.java.name)
+                hasComponent(DeleteFormsActivity::class.java.name)
             )
 
             Intents.release()

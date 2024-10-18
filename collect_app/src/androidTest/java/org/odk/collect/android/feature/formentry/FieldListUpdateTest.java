@@ -57,7 +57,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -271,17 +270,17 @@ public class FieldListUpdateTest {
                 .clickOnQuestion("Level1")
                 .assertTextsDoNotExist("A1", "B1", "C1", "A1A") // No choices should be shown for levels 2 and 3 when no selection is made for level 1
                 .openSelectMinimalDialog(0)
-                .clickOnText("C") // Selecting C for level 1 should only reveal options for C at level 2
+                .selectItem("C") // Selecting C for level 1 should only reveal options for C at level 2
                 .assertTextsDoNotExist("A1", "B1")
                 .openSelectMinimalDialog(1)
-                .clickOnText("C1")
+                .selectItem("C1")
                 .assertTextDoesNotExist("A1A")
                 .clickOnText("C")
                 .clickOnText("A") // Selecting A for level 1 should reveal options for A at level 2
                 .openSelectMinimalDialog(1)
                 .assertText("A1")
                 .assertTextsDoNotExist("A1A", "B1", "C1")
-                .clickOnText("A1") // Selecting A1 for level 2 should reveal options for A1 at level 3
+                .selectItem("A1") // Selecting A1 for level 2 should reveal options for A1 at level 3
                 .openSelectMinimalDialog(2)
                 .assertText("A1A")
                 .assertTextsDoNotExist("B1A", "B1", "C1");
@@ -317,10 +316,10 @@ public class FieldListUpdateTest {
 
         intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
 
-        onView(withId(R.id.capture_image)).perform(click());
+        onView(withId(R.id.capture_button)).perform(click());
 
         onView(withText("Target10-15")).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        onView(withId(R.id.capture_image)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.capture_button)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
@@ -387,13 +386,12 @@ public class FieldListUpdateTest {
                 .clickOnQuestion("Source15")
                 .openSelectMinimalDialog()
                 .assertTexts("Mango", "Oranges", "Strawberries")
-                .clickOnText("Strawberries")
+                .selectItem("Strawberries")
                 .assertText("Target15")
                 .assertSelectMinimalDialogAnswer("Strawberries");
     }
 
     @Test
-    @Ignore("https://github.com/getodk/collect/issues/5996")
     public void listOfQuestionsShouldNotBeScrolledToTheLastEditedQuestionAfterClickingOnAQuestion() {
         new FormEntryPage("fieldlist-updates")
                 .clickGoToArrow()
@@ -401,8 +399,8 @@ public class FieldListUpdateTest {
                 .clickOnGroup("Long list of questions")
                 .clickOnQuestion("Question1")
                 .answerQuestion(0, "X")
-                .activateTextQuestion(19)
-                .checkIsTranslationDisplayed("Question20");
+                .clickOnQuestionField("Question20")
+                .assertText("Question20");
     }
 
     @Test
@@ -415,10 +413,26 @@ public class FieldListUpdateTest {
                 .assertTextDoesNotExist("Target16")
                 .clickOnString(org.odk.collect.strings.R.string.capture_audio)
                 .clickOnContentDescription(org.odk.collect.strings.R.string.stop_recording)
-                .checkIsTranslationDisplayed("Target16")
+                .assertText("Target16")
                 .clickOnString(org.odk.collect.strings.R.string.delete_answer_file)
-                .clickOnButtonInDialog(org.odk.collect.strings.R.string.delete_answer_file, new FormEntryPage("fieldlist-updates"))
+                .clickOnTextInDialog(org.odk.collect.strings.R.string.delete_answer_file, new FormEntryPage("fieldlist-updates"))
                 .assertTextDoesNotExist("Target16");
+    }
+
+    @Test
+    public void changeInValueUsedToDetermineIfAQuestionIsRequired_ShouldUpdateTheRelatedRequiredQuestion() {
+        new FormEntryPage("fieldlist-updates")
+                .clickGoToArrow()
+                .clickGoUpIcon()
+                .clickOnGroup("Dynamic required question")
+                .clickOnQuestion("Source17")
+                .assertQuestion("Target17")
+                .answerQuestion(0, "blah")
+                .assertQuestion("Target17", true)
+                .swipeToNextQuestionWithConstraintViolation(org.odk.collect.strings.R.string.required_answer_error)
+                .answerQuestion(0, "")
+                .assertQuestion("Target17")
+                .assertTextDoesNotExist(org.odk.collect.strings.R.string.required_answer_error);
     }
 
     // Scroll down until the desired group name is visible. This is needed to make the tests work

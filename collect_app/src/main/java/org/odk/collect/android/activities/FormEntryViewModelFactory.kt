@@ -19,12 +19,14 @@ import org.odk.collect.android.formentry.backgroundlocation.BackgroundLocationMa
 import org.odk.collect.android.formentry.backgroundlocation.BackgroundLocationViewModel
 import org.odk.collect.android.formentry.saving.DiskFormSaver
 import org.odk.collect.android.formentry.saving.FormSaveViewModel
+import org.odk.collect.android.instancemanagement.InstancesDataService
 import org.odk.collect.android.instancemanagement.autosend.AutoSendSettingsProvider
 import org.odk.collect.android.projects.ProjectsDataService
 import org.odk.collect.android.utilities.ApplicationConstants
 import org.odk.collect.android.utilities.FormsRepositoryProvider
 import org.odk.collect.android.utilities.InstancesRepositoryProvider
 import org.odk.collect.android.utilities.MediaUtils
+import org.odk.collect.android.utilities.SavepointsRepositoryProvider
 import org.odk.collect.async.Scheduler
 import org.odk.collect.audiorecorder.recording.AudioRecorder
 import org.odk.collect.location.LocationClient
@@ -52,8 +54,10 @@ class FormEntryViewModelFactory(
     private val autoSendSettingsProvider: AutoSendSettingsProvider,
     private val formsRepositoryProvider: FormsRepositoryProvider,
     private val instancesRepositoryProvider: InstancesRepositoryProvider,
+    private val savepointsRepositoryProvider: SavepointsRepositoryProvider,
     private val qrCodeCreator: QRCodeCreator,
-    private val htmlPrinter: HtmlPrinter
+    private val htmlPrinter: HtmlPrinter,
+    private val instancesDataService: InstancesDataService
 ) : AbstractSavedStateViewModelFactory(owner, null) {
 
     override fun <T : ViewModel> create(
@@ -83,7 +87,9 @@ class FormEntryViewModelFactory(
                     projectsDataService,
                     formSessionRepository.get(sessionId),
                     entitiesRepositoryProvider.get(projectId),
-                    instancesRepositoryProvider.get(projectId)
+                    instancesRepositoryProvider.get(projectId),
+                    savepointsRepositoryProvider.get(projectId),
+                    instancesDataService
                 )
             }
 
@@ -123,10 +129,10 @@ class FormEntryViewModelFactory(
                     fusedLocationClient,
                     BackgroundLocationHelper(
                         permissionsProvider,
-                        settingsProvider.getUnprotectedSettings()
-                    ) {
-                        formSessionRepository.get(sessionId).value?.formController
-                    }
+                        settingsProvider.getUnprotectedSettings(),
+                        formSessionRepository,
+                        sessionId
+                    )
                 )
 
                 BackgroundLocationViewModel(locationManager)

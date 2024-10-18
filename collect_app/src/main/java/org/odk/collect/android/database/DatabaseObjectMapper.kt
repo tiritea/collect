@@ -5,9 +5,9 @@ import android.database.Cursor
 import android.provider.BaseColumns
 import org.odk.collect.android.database.forms.DatabaseFormColumns
 import org.odk.collect.android.database.instances.DatabaseInstanceColumns
+import org.odk.collect.androidshared.utils.PathUtils.getAbsoluteFilePath
 import org.odk.collect.forms.Form
 import org.odk.collect.forms.instances.Instance
-import org.odk.collect.shared.PathUtils.getAbsoluteFilePath
 import org.odk.collect.shared.PathUtils.getRelativeFilePath
 import java.lang.Boolean
 
@@ -31,6 +31,7 @@ object DatabaseObjectMapper {
         values.put(DatabaseFormColumns.FORM_MEDIA_PATH, formMediaPath)
         values.put(DatabaseFormColumns.LANGUAGE, form.language)
         values.put(DatabaseFormColumns.AUTO_SEND, form.autoSend)
+        values.put(DatabaseFormColumns.DATE, form.date)
         values.put(DatabaseFormColumns.AUTO_DELETE, form.autoDelete)
         values.put(DatabaseFormColumns.GEOMETRY_XPATH, form.geometryXpath)
         values.put(DatabaseFormColumns.LAST_DETECTED_ATTACHMENTS_UPDATE_DATE, form.lastDetectedAttachmentsUpdateDate)

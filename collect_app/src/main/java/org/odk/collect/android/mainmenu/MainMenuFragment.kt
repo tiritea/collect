@@ -2,7 +2,6 @@ package org.odk.collect.android.mainmenu
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,10 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import org.odk.collect.android.activities.DeleteSavedFormActivity
+import org.odk.collect.android.activities.DeleteFormsActivity
 import org.odk.collect.android.activities.FormDownloadListActivity
 import org.odk.collect.android.activities.InstanceChooserList
-import org.odk.collect.android.activities.WebViewActivity
 import org.odk.collect.android.application.MapboxClassInstanceCreator
 import org.odk.collect.android.databinding.MainMenuBinding
 import org.odk.collect.android.formlists.blankformlist.BlankFormListActivity
@@ -26,13 +24,16 @@ import org.odk.collect.android.formmanagement.FormFillingIntentFactory
 import org.odk.collect.android.instancemanagement.send.InstanceUploaderListActivity
 import org.odk.collect.android.projects.ProjectIconView
 import org.odk.collect.android.projects.ProjectSettingsDialog
+import org.odk.collect.android.utilities.ActionRegister
 import org.odk.collect.android.utilities.ApplicationConstants
+import org.odk.collect.androidshared.data.consume
 import org.odk.collect.androidshared.ui.DialogFragmentUtils
 import org.odk.collect.androidshared.ui.SnackbarUtils
 import org.odk.collect.androidshared.ui.multiclicksafe.MultiClickGuard
 import org.odk.collect.projects.Project
 import org.odk.collect.settings.SettingsProvider
 import org.odk.collect.strings.R.string
+import org.odk.collect.webpage.WebViewActivity
 
 class MainMenuFragment(
     private val viewModelFactory: ViewModelProvider.Factory,
@@ -44,8 +45,9 @@ class MainMenuFragment(
     private lateinit var permissionsViewModel: RequestPermissionsViewModel
 
     private val formEntryFlowLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            displayFormSavedSnackbar(it.data?.data)
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val uri = result.data?.data
+            mainMenuViewModel.setSavedForm(uri)
         }
 
     override fun onAttach(context: Context) {
@@ -82,6 +84,24 @@ class MainMenuFragment(
             DialogFragmentUtils.showIfNotShowing(
                 PermissionsDialogFragment::class.java,
                 this.parentFragmentManager
+            )
+        }
+
+        mainMenuViewModel.savedForm.consume(viewLifecycleOwner) { value ->
+            SnackbarUtils.showLongSnackbar(
+                requireView(),
+                getString(value.message),
+                action = value.action?.let { action ->
+                    SnackbarUtils.Action(getString(action)) {
+                        formEntryFlowLauncher.launch(
+                            FormFillingIntentFactory.editInstanceIntent(
+                                requireContext(),
+                                value.uri
+                            )
+                        )
+                    }
+                },
+                displayDismissButton = true
             )
         }
     }
@@ -144,6 +164,8 @@ class MainMenuFragment(
 
     private fun initButtons(binding: MainMenuBinding) {
         binding.enterData.setOnClickListener {
+            ActionRegister.actionDetected()
+
             formEntryFlowLauncher.launch(
                 Intent(requireActivity(), BlankFormListActivity::class.java)
             )
@@ -186,7 +208,7 @@ class MainMenuFragment(
         }
 
         binding.manageForms.setOnClickListener {
-            startActivity(Intent(requireContext(), DeleteSavedFormActivity::class.java))
+            startActivity(Intent(requireContext(), DeleteFormsActivity::class.java))
         }
 
         mainMenuViewModel.sendableInstancesCount.observe(viewLifecycleOwner) { finalized: Int ->
@@ -238,32 +260,6 @@ class MainMenuFragment(
             }
         } else {
             binding.googleDriveDeprecationBanner.root.visibility = View.GONE
-        }
-    }
-
-    private fun displayFormSavedSnackbar(uri: Uri?) {
-        if (uri == null) {
-            return
-        }
-
-        val formSavedSnackbarDetails = mainMenuViewModel.getFormSavedSnackbarDetails(uri)
-
-        formSavedSnackbarDetails?.let {
-            SnackbarUtils.showLongSnackbar(
-                requireView(),
-                getString(it.first),
-                action = it.second?.let { action ->
-                    SnackbarUtils.Action(getString(action)) {
-                        formEntryFlowLauncher.launch(
-                            FormFillingIntentFactory.editInstanceIntent(
-                                requireContext(),
-                                uri
-                            )
-                        )
-                    }
-                },
-                displayDismissButton = true
-            )
         }
     }
 }

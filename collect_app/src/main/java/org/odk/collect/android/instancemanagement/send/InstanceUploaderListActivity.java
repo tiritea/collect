@@ -20,7 +20,7 @@ import static org.odk.collect.android.utilities.ApplicationConstants.SortingOrde
 import static org.odk.collect.android.utilities.ApplicationConstants.SortingOrder.BY_DATE_DESC;
 import static org.odk.collect.android.utilities.ApplicationConstants.SortingOrder.BY_NAME_ASC;
 import static org.odk.collect.android.utilities.ApplicationConstants.SortingOrder.BY_NAME_DESC;
-import static org.odk.collect.androidshared.ui.MultiSelectViewModelKt.updateSelectAll;
+import static org.odk.collect.lists.selects.MultiSelectViewModelKt.updateSelectAll;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -63,17 +63,19 @@ import org.odk.collect.android.injection.DaggerUtils;
 import org.odk.collect.android.mainmenu.MainMenuActivity;
 import org.odk.collect.android.preferences.screens.ProjectPreferencesActivity;
 import org.odk.collect.android.projects.ProjectsDataService;
-import org.odk.collect.androidshared.network.NetworkStateProvider;
 import org.odk.collect.androidshared.ui.MenuExtKt;
-import org.odk.collect.androidshared.ui.MultiSelectViewModel;
 import org.odk.collect.androidshared.ui.ToastUtils;
 import org.odk.collect.androidshared.ui.multiclicksafe.MultiClickGuard;
+import org.odk.collect.async.network.NetworkStateProvider;
+import org.odk.collect.lists.selects.MultiSelectViewModel;
 import org.odk.collect.settings.SettingsProvider;
+import org.odk.collect.settings.keys.ProjectKeys;
 import org.odk.collect.strings.localization.LocalizedActivity;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -90,7 +92,6 @@ import timber.log.Timber;
 public class InstanceUploaderListActivity extends LocalizedActivity implements
         OnLongClickListener, AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String SHOW_ALL_MODE = "showAllMode";
-    private static final String INSTANCE_UPLOADER_LIST_SORTING_ORDER = "instanceUploaderListSortingOrder";
 
     private static final String IS_SEARCH_BOX_SHOWN = "isSearchBoxShown";
     private static final String SEARCH_TEXT = "searchText";
@@ -127,7 +128,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
     private ProgressBar progressBar;
     private String filterText;
 
-    private MultiSelectViewModel multiSelectViewModel;
+    private MultiSelectViewModel<Object> multiSelectViewModel;
     private ReadyToSendViewModel readyToSendViewModel;
     private boolean allSelected;
 
@@ -152,8 +153,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
         multiSelectViewModel.getSelected().observe(this, ids -> {
             binding.uploadButton.setEnabled(!ids.isEmpty());
             allSelected = updateSelectAll(binding.toggleButton, listAdapter.getCount(), ids.size());
-
-            listAdapter.setSelected(ids);
+            listAdapter.setSelected(ids.stream().map(Long::valueOf).collect(Collectors.toSet()));
         });
         readyToSendViewModel = new ViewModelProvider(this, factory).get(ReadyToSendViewModel.class);
         readyToSendViewModel.getData().observe(this, data -> binding.readyToSendBanner.setData(data));
@@ -179,7 +179,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
             return;
         }
 
-        Set<Long> selectedItems = multiSelectViewModel.getSelected().getValue();
+        Set<Long> selectedItems = multiSelectViewModel.getSelected().getValue().stream().map(Long::valueOf).collect(Collectors.toSet());
         if (!selectedItems.isEmpty()) {
             binding.uploadButton.setEnabled(false);
 
@@ -201,7 +201,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
         progressBar = findViewById(R.id.progressBar);
 
         // Use the nicer-looking drawable with Material Design insets.
-        listView.setDivider(ContextCompat.getDrawable(this, R.drawable.list_item_divider));
+        listView.setDivider(ContextCompat.getDrawable(this, org.odk.collect.androidshared.R.drawable.list_item_divider));
         listView.setDividerHeight(1);
 
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -216,7 +216,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
         binding.toggleButton.setOnClickListener(v -> {
             if (!allSelected) {
                 for (int i = 0; i < listView.getCount(); i++) {
-                    multiSelectViewModel.select(listView.getItemIdAtPosition(i));
+                    multiSelectViewModel.select(String.valueOf(listView.getItemIdAtPosition(i)));
                 }
             } else {
                 multiSelectViewModel.unselectAll();
@@ -289,7 +289,7 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.instance_uploader_menu, menu);
 
-        getMenuInflater().inflate(R.menu.form_list_menu, menu);
+        getMenuInflater().inflate(R.menu.blank_form_list_menu, menu);
         MenuExtKt.enableIconsVisibility(menu);
 
         final MenuItem sortItem = menu.findItem(R.id.menu_sort);
@@ -347,10 +347,6 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
             return true;
         } else if (item.getItemId() == R.id.menu_change_view) {
             showSentAndUnsentChoices();
-            return true;
-        }
-
-        if (!MultiClickGuard.allowClick(getClass().getName())) {
             return true;
         }
 
@@ -425,14 +421,14 @@ public class InstanceUploaderListActivity extends LocalizedActivity implements
 
     private void setupAdapter() {
         listAdapter = new InstanceUploaderAdapter(this, null, dbId -> {
-            multiSelectViewModel.toggle(dbId);
+            multiSelectViewModel.toggle(dbId.toString());
         });
 
         listView.setAdapter(listAdapter);
     }
 
     private String getSortingOrderKey() {
-        return INSTANCE_UPLOADER_LIST_SORTING_ORDER;
+        return ProjectKeys.KEY_SAVED_FORM_SORT_ORDER;
     }
 
     private void updateAdapter() {

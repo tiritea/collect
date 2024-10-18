@@ -39,11 +39,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.odk.collect.analytics.Analytics;
-import org.odk.collect.android.analytics.AnalyticsEvents;
 import org.odk.collect.android.application.Collect;
 import org.odk.collect.android.database.instances.DatabaseInstanceColumns;
 import org.odk.collect.android.exception.EncryptionException;
 import org.odk.collect.android.external.InstancesContract;
+import org.odk.collect.android.formentry.FormEntryUseCases;
 import org.odk.collect.android.formentry.saving.FormSaver;
 import org.odk.collect.android.javarosawrapper.FailedValidationResult;
 import org.odk.collect.android.javarosawrapper.FormController;
@@ -63,8 +63,6 @@ import org.odk.collect.forms.instances.InstancesRepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import timber.log.Timber;
@@ -115,7 +113,7 @@ public class SaveFormToDisk {
 
         ValidationResult validationResult;
         try {
-            validationResult = formController.validateAnswers(true, shouldFinalize);
+            validationResult = formController.validateAnswers(shouldFinalize);
             if (shouldFinalize && validationResult instanceof FailedValidationResult) {
                 // validation failed, pass specific failure
                 saveToDiskResult.setSaveResult(((FailedValidationResult) validationResult).getStatus(), shouldFinalize);
@@ -129,8 +127,7 @@ public class SaveFormToDisk {
         }
 
         if (shouldFinalize) {
-            formController.finalizeForm();
-            formController.getEntities().forEach(entitiesRepository::save);
+            FormEntryUseCases.finalizeFormController(formController, entitiesRepository);
         }
 
         // close all open databases of external data.
@@ -147,7 +144,7 @@ public class SaveFormToDisk {
             Instance instance = exportData(shouldFinalize, progressListener, validationResult);
 
             if (formController.getInstanceFile() != null) {
-                removeSavepointFiles(formController.getInstanceFile().getName());
+                removeIndexFile(formController.getInstanceFile().getName());
             }
 
             saveToDiskResult.setSaveResult(saveAndExit ? SAVED_AND_EXIT : SAVED, shouldFinalize);
@@ -313,14 +310,6 @@ public class SaveFormToDisk {
     }
 
     /**
-     * Return the savepoint file for a given instance.
-     */
-    static File getSavepointFile(String instanceName) {
-        File tempDir = new File(new StoragePathProvider().getOdkDirPath(StorageSubdirectory.CACHE));
-        return new File(tempDir, instanceName + ".save");
-    }
-
-    /**
      * Return the formIndex file for a given instance.
      */
     public static File getFormIndexFile(String instanceName) {
@@ -328,10 +317,8 @@ public class SaveFormToDisk {
         return new File(tempDir, instanceName + ".index");
     }
 
-    public static void removeSavepointFiles(String instanceName) {
-        File savepointFile = getSavepointFile(instanceName);
+    public static void removeIndexFile(String instanceName) {
         File formIndexFile = getFormIndexFile(instanceName);
-        FileUtils.deleteAndReport(savepointFile);
         FileUtils.deleteAndReport(formIndexFile);
     }
 
@@ -369,10 +356,6 @@ public class SaveFormToDisk {
             // now see if the packaging of the data for the server would make it
             // non-reopenable (e.g., encryption or other fraction of the form).
             boolean canEditAfterCompleted = formController.isSubmissionEntireForm();
-            if (!canEditAfterCompleted) {
-                Analytics.log(AnalyticsEvents.PARTIAL_FORM_FINALIZED, "form");
-            }
-
             boolean isEncrypted = false;
 
             // build a submission.xml to hold the data being submitted
@@ -502,36 +485,7 @@ public class SaveFormToDisk {
     /**
      * Writes payload contents to the disk.
      */
-    static void writeFile(ByteArrayPayload payload, String path) throws IOException {
-        File file = new File(path);
-        if (file.exists() && !file.delete()) {
-            throw new IOException("Cannot overwrite " + path + ". Perhaps the file is locked?");
-        }
-
-        // create data stream
-        InputStream is = payload.getPayloadStream();
-        int len = (int) payload.getLength();
-
-        // read from data stream
-        byte[] data = new byte[len];
-        int read = is.read(data, 0, len);
-        if (read > 0) {
-            // Make sure the directory path to this file exists.
-            file.getParentFile().mkdirs();
-            // write xml file
-            RandomAccessFile randomAccessFile = null;
-            try {
-                randomAccessFile = new RandomAccessFile(file, "rws");
-                randomAccessFile.write(data);
-            } finally {
-                if (randomAccessFile != null) {
-                    try {
-                        randomAccessFile.close();
-                    } catch (IOException e) {
-                        Timber.e(e, "Error closing RandomAccessFile: %s", path);
-                    }
-                }
-            }
-        }
+    public static void writeFile(ByteArrayPayload payload, String path) throws IOException {
+        org.odk.collect.shared.files.FileUtils.saveToFile(payload.getPayloadStream(), path);
     }
 }

@@ -48,14 +48,31 @@ android {
 dependencies {
     coreLibraryDesugaring(Dependencies.desugar)
 
+    implementation(project(":async"))
     implementation(project(":shared"))
+    implementation(project(":androidshared"))
+    implementation(project(":icons"))
+    implementation(project(":material"))
+    implementation(project(":settings"))
+    implementation(project(":strings"))
+    implementation(project(":web-page"))
+    implementation(project(":analytics"))
+    implementation(project(":lists"))
+    implementation(Dependencies.android_material)
     implementation(Dependencies.kotlin_stdlib)
     implementation(Dependencies.androidx_fragment_ktx)
     implementation(Dependencies.androidx_preference_ktx)
     implementation(Dependencies.timber)
 
+    debugImplementation(project(":fragments-test"))
+
+    testImplementation(project(":androidtest"))
+    testImplementation(project(":test-shared"))
     testImplementation(Dependencies.junit)
     testImplementation(Dependencies.androidx_test_ext_junit)
     testImplementation(Dependencies.hamcrest)
     testImplementation(Dependencies.robolectric)
+    testImplementation(Dependencies.mockito_kotlin)
+    testImplementation(Dependencies.androidx_test_espresso_contrib)
+    testImplementation(Dependencies.androidx_test_espresso_core)
 }

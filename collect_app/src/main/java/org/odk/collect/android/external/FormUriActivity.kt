@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
@@ -22,22 +21,28 @@ import org.odk.collect.android.injection.DaggerUtils
 import org.odk.collect.android.instancemanagement.InstanceDeleter
 import org.odk.collect.android.instancemanagement.canBeEdited
 import org.odk.collect.android.projects.ProjectsDataService
+import org.odk.collect.android.savepoints.SavepointUseCases
 import org.odk.collect.android.utilities.ApplicationConstants
 import org.odk.collect.android.utilities.ContentUriHelper
 import org.odk.collect.android.utilities.FormsRepositoryProvider
 import org.odk.collect.android.utilities.InstancesRepositoryProvider
+import org.odk.collect.android.utilities.SavepointsRepositoryProvider
 import org.odk.collect.async.Scheduler
+import org.odk.collect.forms.savepoints.Savepoint
 import org.odk.collect.projects.ProjectsRepository
 import org.odk.collect.settings.SettingsProvider
 import org.odk.collect.strings.R.string
+import org.odk.collect.strings.localization.LocalizedActivity
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 /**
  * This class serves as a firewall for starting form filling. It should be used to do that
  * rather than [FormFillingActivity] directly as it ensures that the required data is valid.
  */
-class FormUriActivity : ComponentActivity() {
+class FormUriActivity : LocalizedActivity() {
 
     @Inject
     lateinit var projectsDataService: ProjectsDataService
@@ -50,6 +55,9 @@ class FormUriActivity : ComponentActivity() {
 
     @Inject
     lateinit var instanceRepositoryProvider: InstancesRepositoryProvider
+
+    @Inject
+    lateinit var savepointsRepositoryProvider: SavepointsRepositoryProvider
 
     @Inject
     lateinit var settingsProvider: SettingsProvider
@@ -76,6 +84,7 @@ class FormUriActivity : ComponentActivity() {
                     contentResolver,
                     formsRepositoryProvider,
                     instanceRepositoryProvider,
+                    savepointsRepositoryProvider,
                     resources
                 ) as T
             }
@@ -87,21 +96,46 @@ class FormUriActivity : ComponentActivity() {
         DaggerUtils.getComponent(this).inject(this)
         setContentView(R.layout.circular_progress_indicator)
 
-        formUriViewModel.error.observe(this) {
-            if (it != null) {
-                displayErrorDialog(it)
-            } else if (savedInstanceState?.getBoolean(FORM_FILLING_ALREADY_STARTED) != true) {
-                startForm()
+        if (savedInstanceState?.getBoolean(FORM_FILLING_ALREADY_STARTED) == true) {
+            return
+        }
+
+        formUriViewModel.formInspectionResult.observe(this) {
+            when (it) {
+                is FormInspectionResult.Error -> displayErrorDialog(it.error)
+                is FormInspectionResult.Savepoint -> displaySavePointRecoveryDialog(it.savepoint)
+                is FormInspectionResult.Valid -> startForm(intent.data!!)
             }
         }
     }
 
-    private fun startForm() {
+    private fun displaySavePointRecoveryDialog(savepoint: Savepoint) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(string.savepoint_recovery_dialog_title)
+            .setMessage(SimpleDateFormat(getString(string.savepoint_recovery_dialog_message), Locale.getDefault()).format(File(savepoint.savepointFilePath).lastModified()))
+            .setPositiveButton(string.recover) { _, _ ->
+                val uri = intent.data!!
+                val uriMimeType = contentResolver.getType(uri)!!
+                if (uriMimeType == FormsContract.CONTENT_ITEM_TYPE) {
+                    startForm(FormsContract.getUri(projectsDataService.getCurrentProject().uuid, savepoint.formDbId))
+                } else {
+                    startForm(intent.data!!)
+                }
+            }
+            .setNegativeButton(string.do_not_recover) { _, _ ->
+                formUriViewModel.deleteSavepoint(savepoint)
+            }
+            .setOnCancelListener { finish() }
+            .create()
+            .show()
+    }
+
+    private fun startForm(uri: Uri) {
         formFillingAlreadyStarted = true
         openForm.launch(
             Intent(this, FormFillingActivity::class.java).apply {
                 action = intent.action
-                data = intent.data
+                data = uri
                 intent.extras?.let { sourceExtras -> putExtras(sourceExtras) }
                 if (!canFormBeEdited()) {
                     putExtra(
@@ -148,26 +182,37 @@ class FormUriActivity : ComponentActivity() {
 
 private class FormUriViewModel(
     private val uri: Uri?,
-    scheduler: Scheduler,
+    private val scheduler: Scheduler,
     private val projectsRepository: ProjectsRepository,
     private val projectsDataService: ProjectsDataService,
     private val contentResolver: ContentResolver,
     private val formsRepositoryProvider: FormsRepositoryProvider,
     private val instancesRepositoryProvider: InstancesRepositoryProvider,
+    private val savepointsRepositoryProvider: SavepointsRepositoryProvider,
     private val resources: Resources
 ) : ViewModel() {
 
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
+    private val _formInspectionResult = MutableLiveData<FormInspectionResult>()
+    val formInspectionResult: LiveData<FormInspectionResult> = _formInspectionResult
 
     init {
         scheduler.immediate(
             background = {
-                assertProjectListNotEmpty() ?: assertCurrentProjectUsed() ?: assertValidUri()
-                    ?: assertFormExists() ?: assertFormNotEncrypted()
+                val error = assertProjectListNotEmpty()
+                    ?: assertCurrentProjectUsed()
+                    ?: assertValidUri()
+                    ?: assertFormExists()
+                    ?: assertFormNotEncrypted()
+                if (error != null) {
+                    FormInspectionResult.Error(error)
+                } else {
+                    getSavePoint()?.let {
+                        FormInspectionResult.Savepoint(it)
+                    } ?: FormInspectionResult.Valid
+                }
             },
             foreground = {
-                _error.value = it
+                _formInspectionResult.value = it
             }
         )
     }
@@ -271,4 +316,36 @@ private class FormUriViewModel(
             null
         }
     }
+
+    private fun getSavePoint(): Savepoint? {
+        val uriMimeType = contentResolver.getType(uri!!)!!
+
+        return SavepointUseCases.getSavepoint(
+            uri,
+            uriMimeType,
+            formsRepositoryProvider.get(),
+            instancesRepositoryProvider.get(),
+            savepointsRepositoryProvider.get()
+        )
+    }
+
+    fun deleteSavepoint(savepoint: Savepoint) {
+        scheduler.immediate(
+            background = {
+                if (savepoint.instanceDbId == null) {
+                    File(savepoint.instanceFilePath).parentFile?.deleteRecursively()
+                }
+                savepointsRepositoryProvider.get().delete(savepoint.formDbId, savepoint.instanceDbId)
+            },
+            foreground = {
+                _formInspectionResult.value = FormInspectionResult.Valid
+            }
+        )
+    }
+}
+
+private sealed class FormInspectionResult {
+    data class Error(val error: String) : FormInspectionResult()
+    data class Savepoint(val savepoint: org.odk.collect.forms.savepoints.Savepoint) : FormInspectionResult()
+    data object Valid : FormInspectionResult()
 }

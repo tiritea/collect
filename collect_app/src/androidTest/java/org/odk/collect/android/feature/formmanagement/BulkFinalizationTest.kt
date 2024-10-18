@@ -15,6 +15,7 @@ import org.odk.collect.android.support.pages.MainMenuPage
 import org.odk.collect.android.support.pages.ProjectSettingsPage
 import org.odk.collect.android.support.pages.SaveOrDiscardFormDialog
 import org.odk.collect.android.support.rules.CollectTestRule
+import org.odk.collect.android.support.rules.RecentAppsRule
 import org.odk.collect.android.support.rules.TestRuleChain
 import org.odk.collect.strings.R.plurals
 import org.odk.collect.strings.R.string
@@ -22,11 +23,14 @@ import org.odk.collect.strings.R.string
 @RunWith(AndroidJUnit4::class)
 class BulkFinalizationTest {
 
-    val testDependencies = TestDependencies()
-    val rule = CollectTestRule(useDemoProject = false)
+    private val testDependencies = TestDependencies()
+    private val recentAppsRule = RecentAppsRule()
+    private val rule = CollectTestRule(useDemoProject = false)
 
     @get:Rule
-    val chain: RuleChain = TestRuleChain.chain(testDependencies).around(rule)
+    val chain: RuleChain = TestRuleChain.chain(testDependencies)
+        .around(recentAppsRule)
+        .around(rule)
 
     @Test
     fun canBulkFinalizeDraftsInTheListOfDrafts() {
@@ -99,7 +103,7 @@ class BulkFinalizationTest {
 
             .clickOptionsIcon(string.finalize_all_drafts)
             .clickOnString(string.finalize_all_drafts)
-            .clickOnButtonInDialog(string.finalize, EditSavedFormPage(false))
+            .clickOnTextInDialog(string.finalize, EditSavedFormPage(false))
             .checkIsSnackbarWithQuantityDisplayed(plurals.bulk_finalize_failure, 1)
     }
 
@@ -113,7 +117,7 @@ class BulkFinalizationTest {
 
             .clickDrafts()
             .clickOnForm("One Question")
-            .killAndReopenApp(rule, MainMenuPage())
+            .killAndReopenApp(rule, recentAppsRule, MainMenuPage())
 
             .clickDrafts(false)
             .clickFinalizeAll(1)
@@ -167,7 +171,10 @@ class BulkFinalizationTest {
     @Test
     fun whenAutoSendIsEnabled_draftsAreSentAfterFinalizing() {
         val mainMenuPage = rule.withProject(testDependencies.server.url)
-            .enableAutoSend(testDependencies.scheduler)
+            .enableAutoSend(
+                testDependencies.scheduler,
+                string.wifi_cellular_autosend
+            )
 
             .copyForm("one-question.xml", testDependencies.server.hostName)
             .startBlankForm("One Question")
@@ -182,6 +189,26 @@ class BulkFinalizationTest {
 
         mainMenuPage.clickViewSentForm(1)
             .assertText("One Question")
+
+        assertThat(testDependencies.server.submissions.size, equalTo(1))
+    }
+
+    @Test
+    fun whenDraftFormHasAutoSendEnabled_draftsAreSentAfterFinalizing() {
+        val mainMenuPage = rule.withProject(testDependencies.server.url)
+            .copyForm("one-question-autosend.xml", testDependencies.server.hostName)
+            .startBlankForm("One Question Autosend")
+            .fillOutAndSave(QuestionAndAnswer("what is your age", "97"))
+
+            .clickDrafts(1)
+            .clickFinalizeAll(1)
+            .clickFinalize()
+            .pressBack(MainMenuPage())
+
+        testDependencies.scheduler.runDeferredTasks()
+
+        mainMenuPage.clickViewSentForm(1)
+            .assertText("One Question Autosend")
 
         assertThat(testDependencies.server.submissions.size, equalTo(1))
     }

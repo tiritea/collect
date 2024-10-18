@@ -238,9 +238,9 @@ dependencies {
     implementation project(':material')
     implementation project(':async')
     implementation project(':analytics')
-    implementation project(':audioclips')
+    implementation project(':audio-clips')
     implementation project(':forms')
-    implementation project(':audiorecorder')
+    implementation project(':audio-recorder')
     implementation project(':projects')
     implementation project(':location')
     implementation project(':geo')
@@ -262,6 +262,8 @@ dependencies {
     implementation project(':google-maps')
     implementation project(':draw')
     implementation project(':printer')
+    implementation project(':lists')
+    implementation project(':web-page')
 
     if (getSecrets().getProperty('MAPBOX_DOWNLOADS_TOKEN', '') != '') {
         implementation project(':mapbox')
@@ -277,7 +279,6 @@ dependencies {
     implementation Dependencies.androidx_preference_ktx
     implementation Dependencies.androidx_fragment_ktx
 
-    implementation Dependencies.android_material
     implementation Dependencies.android_flexbox
 
     implementation Dependencies.play_services_maps
@@ -286,8 +287,6 @@ dependencies {
 
     implementation Dependencies.firebase_analytics
     implementation Dependencies.firebase_crashlytics
-
-    implementation Dependencies.guava
 
     implementation Dependencies.squareup_okhttp
     implementation Dependencies.squareup_okhttp_tls
@@ -341,7 +340,7 @@ dependencies {
 
     implementation Dependencies.splashscreen
 
-    testImplementation project(':formstest')
+    testImplementation project(':forms-test')
 
     // Testing-only dependencies
     testImplementation Dependencies.junit

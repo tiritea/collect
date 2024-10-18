@@ -5,7 +5,7 @@ import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.TestCase.assertNotSame;
-import static org.odk.collect.android.support.matchers.DrawableMatcher.withImageDrawable;
+import static org.odk.collect.androidtest.DrawableMatcher.withImageDrawable;
 import static org.odk.collect.testshared.RecyclerViewMatcher.withRecyclerView;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -97,7 +97,7 @@ public class FillBlankFormTest {
         rule.startAtMainMenu()
                 .copyForm("1560_DateData.xml")
                 .startBlankForm("1560_DateData")
-                .checkIsTranslationDisplayed("Jan 01, 1900", "01 ene. 1900")
+                .assertText("Jan 01, 1900")
                 .swipeToEndScreen("01/01/00")
                 .clickFinalize()
 
@@ -419,13 +419,13 @@ public class FillBlankFormTest {
                 .startBlankForm("Nigeria Wards")
                 .assertQuestion("State")
                 .openSelectMinimalDialog()
-                .clickOnText("Adamawa")
+                .selectItem("Adamawa")
                 .swipeToNextQuestion("LGA", true)
                 .openSelectMinimalDialog()
-                .clickOnText("Ganye")
+                .selectItem("Ganye")
                 .swipeToNextQuestion("Ward", true)
                 .openSelectMinimalDialog()
-                .clickOnText("Jaggu")
+                .selectItem("Jaggu")
                 .swipeToNextQuestion("Comments")
                 .swipeToEndScreen()
                 .clickFinalize();
@@ -575,7 +575,7 @@ public class FillBlankFormTest {
                 .copyForm("3403.xml", asList("staff_list.csv", "staff_rights.csv"))
                 .startBlankForm("3403_ODK Version 1.23.3 Tester")
                 .clickOnText("New Farmer Registration")
-                .scrollToAndClickText("Insemination")
+                .clickOnText("Insemination")
                 .assertText("New Farmer Registration");
     }
 

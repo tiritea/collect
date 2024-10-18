@@ -5,14 +5,13 @@ import org.javarosa.core.model.FormIndex
 import org.javarosa.core.model.data.IAnswerData
 import org.javarosa.core.model.instance.TreeReference
 import org.javarosa.core.services.transport.payload.ByteArrayPayload
+import org.javarosa.entities.internal.Entities
 import org.javarosa.form.api.FormEntryCaption
 import org.javarosa.form.api.FormEntryPrompt
 import org.odk.collect.android.exception.JavaRosaException
 import org.odk.collect.android.formentry.audit.AuditEventLogger
-import org.odk.collect.entities.Entity
 import java.io.File
 import java.io.IOException
-import java.util.stream.Stream
 
 interface FormController {
     fun getFormDef(): FormDef?
@@ -139,7 +138,7 @@ interface FormController {
      * type.
      */
     @Throws(JavaRosaException::class)
-    fun validateAnswers(markCompleted: Boolean, moveToInvalidIndex: Boolean): ValidationResult
+    fun validateAnswers(moveToInvalidIndex: Boolean): ValidationResult
 
     /**
      * saveAnswer attempts to save the current answer into the data model without doing any
@@ -275,6 +274,8 @@ interface FormController {
      */
     fun indexContainsRepeatableGroup(): Boolean
 
+    fun indexContainsRepeatableGroup(formIndex: FormIndex?): Boolean
+
     /**
      * The count of the closest group that repeats or -1.
      */
@@ -307,7 +308,7 @@ interface FormController {
      * enables a filled-in form to be re-opened and edited.
      */
     @Throws(IOException::class)
-    fun getFilledInFormXml(): ByteArrayPayload?
+    fun getFilledInFormXml(): ByteArrayPayload
 
     /**
      * Extract the portion of the form that should be uploaded to the server.
@@ -333,5 +334,5 @@ interface FormController {
 
     fun getAnswer(treeReference: TreeReference?): IAnswerData?
 
-    fun getEntities(): Stream<Entity>
+    fun getEntities(): Entities?
 }
