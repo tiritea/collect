@@ -962,7 +962,7 @@
   <!--An uncaught exception is an exception that is not handled by KoboCollect and so will force the application to close-->
   <string name="crash_app_summary">强制执行导致应用程序崩溃的未捕获异常</string>
   <string name="permission_dialog_title">关于权限</string>
-  <string name="permission_dialog_text">您将被要求允许 ODK Collect 访问以下功能，如果您想使用它们，请选择“允许”。</string>
+  <string name="permission_dialog_text">您将被要求允许 KoboCollect 访问以下功能，如果您想使用它们，请选择“允许”。</string>
   <string name="notifications">提醒事项</string>
   <string name="required_for_notifications"> 在下载、更新和发送表单时需要显示更新。</string>
   <!--##############################################
