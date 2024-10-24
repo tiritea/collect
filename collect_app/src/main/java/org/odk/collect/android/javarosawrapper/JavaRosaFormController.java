@@ -47,14 +47,13 @@ import org.javarosa.model.xform.XPathReference;
 import org.javarosa.xform.parse.XFormParser;
 import org.javarosa.xpath.XPathParseTool;
 import org.javarosa.xpath.expr.XPathExpression;
-import org.odk.collect.android.exception.JavaRosaException;
 import org.odk.collect.android.dynamicpreload.ExternalDataUtil;
+import org.odk.collect.android.exception.JavaRosaException;
 import org.odk.collect.android.formentry.audit.AsyncTaskAuditEventWriter;
 import org.odk.collect.android.formentry.audit.AuditConfig;
 import org.odk.collect.android.formentry.audit.AuditEventLogger;
 import org.odk.collect.android.utilities.Appearances;
 import org.odk.collect.android.utilities.FileUtils;
-import org.odk.collect.entities.Entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +61,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
 
 import timber.log.Timber;
 
@@ -395,9 +393,9 @@ public class JavaRosaFormController implements FormController {
         }
     }
 
-    public ValidationResult validateAnswers(boolean markCompleted, boolean moveToInvalidIndex) throws JavaRosaException {
+    public ValidationResult validateAnswers(boolean moveToInvalidIndex) throws JavaRosaException {
         try {
-            ValidateOutcome validateOutcome = getFormDef().validate(markCompleted);
+            ValidateOutcome validateOutcome = getFormDef().validate();
             if (validateOutcome != null) {
                 if (moveToInvalidIndex) {
                     this.jumpToIndex(validateOutcome.failedPrompt);
@@ -904,7 +902,11 @@ public class JavaRosaFormController implements FormController {
     }
 
     public boolean indexContainsRepeatableGroup() {
-        FormEntryCaption[] groups = getCaptionHierarchy();
+        return indexContainsRepeatableGroup(getFormIndex());
+    }
+
+    public boolean indexContainsRepeatableGroup(FormIndex formIndex) {
+        FormEntryCaption[] groups = getCaptionHierarchy(formIndex);
         if (groups.length == 0) {
             return false;
         }
@@ -1107,12 +1109,7 @@ public class JavaRosaFormController implements FormController {
         return getFormDef().getMainInstance().resolveReference(treeReference).getValue();
     }
 
-    public Stream<Entity> getEntities() {
-        Entities extra = formEntryController.getModel().getExtras().get(Entities.class);
-        if (extra != null) {
-            return extra.getEntities().stream().map(entity -> new Entity(entity.dataset, entity.properties));
-        } else {
-            return Stream.empty();
-        }
+    public Entities getEntities() {
+        return formEntryController.getModel().getExtras().get(Entities.class);
     }
 }

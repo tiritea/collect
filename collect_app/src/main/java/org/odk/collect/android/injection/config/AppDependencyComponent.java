@@ -5,26 +5,23 @@ import android.app.Application;
 import org.javarosa.core.reference.ReferenceManager;
 import org.odk.collect.android.activities.AboutActivity;
 import org.odk.collect.android.activities.AppListActivity;
-import org.odk.collect.android.activities.DeleteSavedFormActivity;
+import org.odk.collect.android.activities.DeleteFormsActivity;
 import org.odk.collect.android.activities.FirstLaunchActivity;
 import org.odk.collect.android.activities.FormDownloadListActivity;
 import org.odk.collect.android.activities.FormFillingActivity;
-import org.odk.collect.android.formhierarchy.FormHierarchyActivity;
 import org.odk.collect.android.activities.FormMapActivity;
 import org.odk.collect.android.activities.InstanceChooserList;
-import org.odk.collect.android.adapters.InstanceUploaderAdapter;
 import org.odk.collect.android.application.Collect;
 import org.odk.collect.android.application.initialization.ApplicationInitializer;
 import org.odk.collect.android.application.initialization.ExistingProjectMigrator;
 import org.odk.collect.android.audio.AudioRecordingControllerFragment;
 import org.odk.collect.android.audio.AudioRecordingErrorDialogFragment;
-import org.odk.collect.android.backgroundwork.AutoSendTaskSpec;
+import org.odk.collect.android.backgroundwork.SendFormsTaskSpec;
 import org.odk.collect.android.backgroundwork.AutoUpdateTaskSpec;
 import org.odk.collect.android.backgroundwork.SyncFormsTaskSpec;
 import org.odk.collect.android.configure.qr.QRCodeScannerFragment;
 import org.odk.collect.android.configure.qr.QRCodeTabsActivity;
 import org.odk.collect.android.configure.qr.ShowQRCodeFragment;
-import org.odk.collect.draw.DrawActivity;
 import org.odk.collect.android.entities.EntitiesRepositoryProvider;
 import org.odk.collect.android.external.AndroidShortcutsActivity;
 import org.odk.collect.android.external.FormUriActivity;
@@ -35,19 +32,17 @@ import org.odk.collect.android.formentry.ODKView;
 import org.odk.collect.android.formentry.repeats.DeleteRepeatDialogFragment;
 import org.odk.collect.android.formentry.saving.SaveAnswerFileErrorDialogFragment;
 import org.odk.collect.android.formentry.saving.SaveFormProgressDialogFragment;
+import org.odk.collect.android.formhierarchy.FormHierarchyActivity;
 import org.odk.collect.android.formlists.blankformlist.BlankFormListActivity;
 import org.odk.collect.android.formmanagement.FormSourceProvider;
 import org.odk.collect.android.formmanagement.FormsDataService;
-import org.odk.collect.android.fragments.AppListFragment;
 import org.odk.collect.android.fragments.BarCodeScannerFragment;
-import org.odk.collect.android.fragments.SavedFormListFragment;
 import org.odk.collect.android.fragments.dialogs.FormsDownloadResultDialog;
 import org.odk.collect.android.fragments.dialogs.SelectMinimalDialog;
 import org.odk.collect.android.instancemanagement.send.InstanceUploaderActivity;
 import org.odk.collect.android.instancemanagement.send.InstanceUploaderListActivity;
 import org.odk.collect.android.mainmenu.MainMenuActivity;
 import org.odk.collect.android.openrosa.OpenRosaHttpInterface;
-import org.odk.collect.android.preferences.CaptionedListPreference;
 import org.odk.collect.android.preferences.dialogs.AdminPasswordDialogFragment;
 import org.odk.collect.android.preferences.dialogs.ChangeAdminPasswordDialog;
 import org.odk.collect.android.preferences.dialogs.ResetDialogPreferenceFragmentCompat;
@@ -67,24 +62,25 @@ import org.odk.collect.android.preferences.screens.ProjectPreferencesFragment;
 import org.odk.collect.android.preferences.screens.ServerPreferencesFragment;
 import org.odk.collect.android.preferences.screens.UserInterfacePreferencesFragment;
 import org.odk.collect.android.projects.ManualProjectCreatorDialog;
+import org.odk.collect.android.projects.ProjectDependencyProviderFactory;
+import org.odk.collect.android.projects.ProjectResetter;
 import org.odk.collect.android.projects.ProjectSettingsDialog;
 import org.odk.collect.android.projects.ProjectsDataService;
 import org.odk.collect.android.projects.QrCodeProjectCreatorDialog;
 import org.odk.collect.android.storage.StoragePathProvider;
 import org.odk.collect.android.tasks.DownloadFormListTask;
-import org.odk.collect.android.tasks.InstanceServerUploaderTask;
+import org.odk.collect.android.tasks.InstanceUploaderTask;
 import org.odk.collect.android.tasks.MediaLoadingTask;
-import org.odk.collect.android.upload.InstanceUploader;
 import org.odk.collect.android.utilities.AuthDialogUtility;
 import org.odk.collect.android.utilities.FormsRepositoryProvider;
 import org.odk.collect.android.utilities.InstancesRepositoryProvider;
-import org.odk.collect.android.utilities.ProjectResetter;
+import org.odk.collect.android.utilities.SavepointsRepositoryProvider;
 import org.odk.collect.android.utilities.ThemeUtils;
-import org.odk.collect.android.widgets.ExStringWidget;
 import org.odk.collect.android.widgets.QuestionWidget;
 import org.odk.collect.android.widgets.items.SelectOneFromMapDialogFragment;
-import org.odk.collect.androidshared.network.NetworkStateProvider;
+import org.odk.collect.async.network.NetworkStateProvider;
 import org.odk.collect.async.Scheduler;
+import org.odk.collect.draw.DrawActivity;
 import org.odk.collect.googlemaps.GoogleMapFragment;
 import org.odk.collect.location.LocationClient;
 import org.odk.collect.maps.MapFragmentFactory;
@@ -94,6 +90,7 @@ import org.odk.collect.permissions.PermissionsProvider;
 import org.odk.collect.projects.ProjectsRepository;
 import org.odk.collect.settings.ODKAppSettingsImporter;
 import org.odk.collect.settings.SettingsProvider;
+import org.odk.collect.webpage.ExternalWebPageHelper;
 
 import javax.inject.Singleton;
 
@@ -140,13 +137,9 @@ public interface AppDependencyComponent {
 
     void inject(AboutActivity aboutActivity);
 
-    void inject(InstanceUploaderAdapter instanceUploaderAdapter);
-
-    void inject(SavedFormListFragment savedFormListFragment);
-
     void inject(FormFillingActivity formFillingActivity);
 
-    void inject(InstanceServerUploaderTask uploader);
+    void inject(InstanceUploaderTask uploader);
 
     void inject(ServerPreferencesFragment serverPreferencesFragment);
 
@@ -162,8 +155,6 @@ public interface AppDependencyComponent {
 
     void inject(QuestionWidget questionWidget);
 
-    void inject(ExStringWidget exStringWidget);
-
     void inject(ODKView odkView);
 
     void inject(FormMetadataPreferencesFragment formMetadataPreferencesFragment);
@@ -178,7 +169,7 @@ public interface AppDependencyComponent {
 
     void inject(ShowQRCodeFragment showQRCodeFragment);
 
-    void inject(AutoSendTaskSpec autoSendTaskSpec);
+    void inject(SendFormsTaskSpec sendFormsTaskSpec);
 
     void inject(AdminPasswordDialogFragment adminPasswordDialogFragment);
 
@@ -214,7 +205,7 @@ public interface AppDependencyComponent {
 
     void inject(ProjectPreferencesFragment projectPreferencesFragment);
 
-    void inject(DeleteSavedFormActivity deleteSavedFormActivity);
+    void inject(DeleteFormsActivity deleteFormsActivity);
 
     void inject(SelectMinimalDialog selectMinimalDialog);
 
@@ -232,8 +223,6 @@ public interface AppDependencyComponent {
 
     void inject(BackgroundAudioPermissionDialogFragment backgroundAudioPermissionDialogFragment);
 
-    void inject(AppListFragment appListFragment);
-
     void inject(ChangeAdminPasswordDialog changeAdminPasswordDialog);
 
     void inject(MediaLoadingTask mediaLoadingTask);
@@ -244,8 +233,6 @@ public interface AppDependencyComponent {
 
     void inject(BaseAdminPreferencesFragment baseAdminPreferencesFragment);
 
-    void inject(CaptionedListPreference captionedListPreference);
-
     void inject(AndroidShortcutsActivity androidShortcutsActivity);
 
     void inject(ProjectSettingsDialog projectSettingsDialog);
@@ -255,8 +242,6 @@ public interface AppDependencyComponent {
     void inject(QrCodeProjectCreatorDialog qrCodeProjectCreatorDialog);
 
     void inject(FirstLaunchActivity firstLaunchActivity);
-
-    void inject(InstanceUploader instanceUploader);
 
     void inject(FormUriActivity formUriActivity);
 
@@ -296,6 +281,8 @@ public interface AppDependencyComponent {
 
     InstancesRepositoryProvider instancesRepositoryProvider();
 
+    SavepointsRepositoryProvider savepointsRepositoryProvider();
+
     FormSourceProvider formSourceProvider();
 
     ExistingProjectMigrator existingProjectMigrator();
@@ -319,4 +306,8 @@ public interface AppDependencyComponent {
     EntitiesRepositoryProvider entitiesRepositoryProvider();
 
     FormsDataService formsDataService();
+
+    ProjectDependencyProviderFactory projectDependencyProviderFactory();
+
+    ExternalWebPageHelper externalWebPageHelper();
 }

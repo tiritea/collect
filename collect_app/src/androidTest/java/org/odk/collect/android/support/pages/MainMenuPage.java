@@ -12,10 +12,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.StringContains.containsString;
 
+import org.jetbrains.annotations.NotNull;
 import org.odk.collect.android.R;
 import org.odk.collect.android.support.StorageUtils;
 import org.odk.collect.android.support.TestScheduler;
-import org.odk.collect.android.support.WaitFor;
+import org.odk.collect.testshared.WaitFor;
+import org.odk.collect.strings.R.string;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,6 +45,11 @@ public class MainMenuPage extends Page<MainMenuPage> {
         return new FormEntryPage(formName).assertOnPage();
     }
 
+    public SavepointRecoveryDialogPage startBlankFormWithSavepoint(String formName) {
+        goToBlankForm(formName);
+        return new SavepointRecoveryDialogPage().assertOnPage();
+    }
+
     public AddNewRepeatDialog startBlankFormWithRepeatGroup(String formName, String repeatName) {
         goToBlankForm(formName);
         return new AddNewRepeatDialog(repeatName).assertOnPage();
@@ -59,7 +66,10 @@ public class MainMenuPage extends Page<MainMenuPage> {
     }
 
     public FillBlankFormPage clickFillBlankForm() {
-        onView(withId(R.id.enter_data)).perform(click());
+        tryFlakyAction(() -> {
+            onView(withId(R.id.enter_data)).perform(click());
+        });
+
         return new FillBlankFormPage().assertOnPage();
     }
 
@@ -181,12 +191,12 @@ public class MainMenuPage extends Page<MainMenuPage> {
                 .pressBack(new MainMenuPage());
     }
 
-    public MainMenuPage enableAutoSend(TestScheduler scheduler) {
+    public MainMenuPage enableAutoSend(TestScheduler scheduler, int setting) {
         MainMenuPage mainMenuPage = openProjectSettingsDialog()
                 .clickSettings()
                 .clickFormManagement()
                 .clickOnString(org.odk.collect.strings.R.string.autosend)
-                .clickOnString(org.odk.collect.strings.R.string.wifi_cellular_autosend)
+                .clickOnString(setting)
                 .pressBack(new ProjectSettingsPage())
                 .pressBack(new MainMenuPage());
 
@@ -273,9 +283,43 @@ public class MainMenuPage extends Page<MainMenuPage> {
         openProjectSettingsDialog()
                 .clickSettings()
                 .clickExperimental()
-                .clickOnString(org.odk.collect.strings.R.string.entities_title);
+                .clickOnString(org.odk.collect.strings.R.string.entity_browser_button);
 
         return new EntitiesPage().assertOnPage();
+    }
+
+    public MainMenuPage addEntityListInBrowser(String entityList) {
+        return openEntityBrowser()
+                .clickOptionsIcon(string.add_entity_list)
+                .clickOnTextInPopup(string.add_entity_list)
+                .inputText(entityList)
+                .clickOnTextInDialog(string.add)
+                .assertText(entityList)
+                .pressBack(new ExperimentalPage())
+                .pressBack(new ProjectSettingsPage())
+                .pressBack(new MainMenuPage());
+    }
+
+    public MainMenuPage refreshForms() {
+        return clickFillBlankForm()
+                .clickRefresh()
+                .pressBack(new MainMenuPage());
+    }
+
+    public MainMenuPage setupEntities(String entityList) {
+        return enableLocalEntitiesInForms()
+                .addEntityListInBrowser(entityList)
+                .refreshForms();
+    }
+
+    @NotNull
+    public MainMenuPage enableLocalEntitiesInForms() {
+        return openProjectSettingsDialog()
+                .clickSettings()
+                .clickExperimental()
+                .clickOnString(org.odk.collect.strings.R.string.include_local_entities_setting)
+                .pressBack(new ProjectSettingsPage())
+                .pressBack(new MainMenuPage());
     }
 }
 

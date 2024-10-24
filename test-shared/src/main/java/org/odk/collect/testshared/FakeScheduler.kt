@@ -35,17 +35,23 @@ class FakeScheduler : Scheduler {
         )
     }
 
-    override fun immediate(background: Boolean, runnable: Runnable) {
-        if (background) {
+    override fun immediate(foreground: Boolean, runnable: Runnable) {
+        if (!foreground) {
             backgroundTasks.push(runnable)
         } else {
             foregroundTasks.push(runnable)
         }
     }
 
-    override fun networkDeferred(tag: String, spec: TaskSpec, inputData: Map<String, String>) {}
-
     override fun networkDeferred(
+        tag: String,
+        spec: TaskSpec,
+        inputData: Map<String, String>,
+        networkConstraint: Scheduler.NetworkType?
+    ) {
+    }
+
+    override fun networkDeferredRepeat(
         tag: String,
         taskSpec: TaskSpec,
         repeatPeriod: Long,
@@ -69,6 +75,12 @@ class FakeScheduler : Scheduler {
 
     override fun <T> flowOnBackground(flow: Flow<T>): Flow<T> {
         return flow.flowOn(backgroundDispatcher)
+    }
+
+    fun runFirstForeground() {
+        if (foregroundTasks.isNotEmpty()) {
+            foregroundTasks.removeFirst().run()
+        }
     }
 
     fun runForeground() {
@@ -97,6 +109,12 @@ class FakeScheduler : Scheduler {
         }
     }
 
+    fun runFirstBackground() {
+        if (backgroundTasks.isNotEmpty()) {
+            backgroundTasks.removeFirst().run()
+        }
+    }
+
     fun runBackground() {
         while (backgroundTasks.isNotEmpty()) {
             backgroundTasks.remove().run()
@@ -122,9 +140,9 @@ class FakeScheduler : Scheduler {
 }
 
 fun <T> LiveData<T>.getOrAwaitValue(
-    scheduler: FakeScheduler
+    scheduler: FakeScheduler? = null
 ): T {
-    return this.getOrAwaitValue { scheduler.flush() }
+    return this.getOrAwaitValue { scheduler?.flush() }
 }
 
 private data class RepeatTask(val interval: Long, val runnable: Runnable, var lastRun: Long?)

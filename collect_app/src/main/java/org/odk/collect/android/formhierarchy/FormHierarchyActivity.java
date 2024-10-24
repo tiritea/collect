@@ -54,6 +54,7 @@ import org.odk.collect.android.formentry.FormSessionRepository;
 import org.odk.collect.android.formentry.ODKView;
 import org.odk.collect.android.formentry.repeats.DeleteRepeatDialogFragment;
 import org.odk.collect.android.injection.DaggerUtils;
+import org.odk.collect.android.instancemanagement.InstancesDataService;
 import org.odk.collect.android.instancemanagement.autosend.AutoSendSettingsProvider;
 import org.odk.collect.android.javarosawrapper.FormController;
 import org.odk.collect.android.javarosawrapper.JavaRosaFormController;
@@ -64,12 +65,13 @@ import org.odk.collect.android.utilities.FormsRepositoryProvider;
 import org.odk.collect.android.utilities.HtmlUtils;
 import org.odk.collect.android.utilities.InstancesRepositoryProvider;
 import org.odk.collect.android.utilities.MediaUtils;
-import org.odk.collect.android.views.EmptyListView;
+import org.odk.collect.android.utilities.SavepointsRepositoryProvider;
 import org.odk.collect.androidshared.ui.DialogFragmentUtils;
 import org.odk.collect.androidshared.ui.FragmentFactoryBuilder;
 import org.odk.collect.androidshared.ui.multiclicksafe.MultiClickGuard;
 import org.odk.collect.async.Scheduler;
 import org.odk.collect.audiorecorder.recording.AudioRecorder;
+import org.odk.collect.lists.EmptyListView;
 import org.odk.collect.location.LocationClient;
 import org.odk.collect.permissions.PermissionsChecker;
 import org.odk.collect.permissions.PermissionsProvider;
@@ -190,6 +192,12 @@ public class FormHierarchyActivity extends LocalizedActivity implements DeleteRe
     @Inject
     public FormsRepositoryProvider formsRepositoryProvider;
 
+    @Inject
+    public SavepointsRepositoryProvider savepointsRepositoryProvider;
+
+    @Inject
+    public InstancesDataService instancesDataService;
+
     protected final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
@@ -223,8 +231,10 @@ public class FormHierarchyActivity extends LocalizedActivity implements DeleteRe
                 autoSendSettingsProvider,
                 formsRepositoryProvider,
                 instancesRepositoryProvider,
+                savepointsRepositoryProvider,
                 new QRCodeCreatorImpl(),
-                new HtmlPrinter()
+                new HtmlPrinter(),
+                instancesDataService
         );
 
         this.getSupportFragmentManager().setFragmentFactory(new FragmentFactoryBuilder()
@@ -327,7 +337,7 @@ public class FormHierarchyActivity extends LocalizedActivity implements DeleteRe
 
         boolean isAtBeginning = screenIndex.isBeginningOfFormIndex() && !shouldShowRepeatGroupPicker();
         boolean shouldShowPicker = shouldShowRepeatGroupPicker();
-        boolean isInRepeat = formController.indexContainsRepeatableGroup();
+        boolean isInRepeat = formController.indexContainsRepeatableGroup(screenIndex);
         boolean isGroupSizeLocked = shouldShowPicker
                 ? isGroupSizeLocked(repeatGroupPickerIndex) : isGroupSizeLocked(screenIndex);
 
@@ -488,15 +498,7 @@ public class FormHierarchyActivity extends LocalizedActivity implements DeleteRe
      */
     private CharSequence getCurrentPath() {
         FormController formController = formEntryViewModel.getFormController();
-        FormIndex index = formController.getFormIndex();
-
-        // Step out to the enclosing group if the current index is something
-        // we don't want to display in the path (e.g. a question name or the
-        // very first group in a form which is auto-entered).
-        if (formController.getEvent(index) == FormEntryController.EVENT_QUESTION
-                || getPreviousLevel(index) == null) {
-            index = getPreviousLevel(index);
-        }
+        FormIndex index = screenIndex;
 
         List<FormEntryCaption> groups = new ArrayList<>();
 
@@ -616,7 +618,7 @@ public class FormHierarchyActivity extends LocalizedActivity implements DeleteRe
                 groupPathTextView.setVisibility(View.VISIBLE);
                 groupPathTextView.setText(getCurrentPath());
 
-                if (formController.indexContainsRepeatableGroup() || shouldShowRepeatGroupPicker()) {
+                if (formController.indexContainsRepeatableGroup(screenIndex) || shouldShowRepeatGroupPicker()) {
                     groupIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_repeat));
                 } else {
                     groupIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_folder_open));

@@ -34,7 +34,6 @@ import org.odk.collect.android.javarosawrapper.FormController;
 import org.odk.collect.android.listeners.AdvanceToNextListener;
 import org.odk.collect.android.storage.StoragePathProvider;
 import org.odk.collect.android.utilities.Appearances;
-import org.odk.collect.android.utilities.ExternalWebPageHelper;
 import org.odk.collect.android.utilities.QuestionMediaManager;
 import org.odk.collect.android.widgets.items.LabelWidget;
 import org.odk.collect.android.widgets.items.LikertWidget;
@@ -66,6 +65,7 @@ import org.odk.collect.androidshared.system.CameraUtils;
 import org.odk.collect.androidshared.system.IntentLauncherImpl;
 import org.odk.collect.audiorecorder.recording.AudioRecorder;
 import org.odk.collect.permissions.PermissionsProvider;
+import org.odk.collect.webpage.ExternalWebPageHelper;
 
 /**
  * Convenience class that handles creation of widgets.
@@ -143,7 +143,7 @@ public class WidgetFactory {
                         questionWidget = new TimeWidget(activity, questionDetails, new DateTimeWidgetUtils(), waitingForDataRegistry);
                         break;
                     case Constants.DATATYPE_DECIMAL:
-                        if (appearance.startsWith(Appearances.EX)) {
+                        if (appearance.contains(Appearances.EX)) {
                             questionWidget = new ExDecimalWidget(activity, questionDetails, waitingForDataRegistry, stringRequester);
                         } else if (appearance.equals(Appearances.BEARING)) {
                             questionWidget = new BearingWidget(activity, questionDetails, waitingForDataRegistry,
@@ -153,7 +153,7 @@ public class WidgetFactory {
                         }
                         break;
                     case Constants.DATATYPE_INTEGER:
-                        if (appearance.startsWith(Appearances.EX)) {
+                        if (appearance.contains(Appearances.EX)) {
                             questionWidget = new ExIntegerWidget(activity, questionDetails, waitingForDataRegistry, stringRequester);
                         } else {
                             questionWidget = new IntegerWidget(activity, questionDetails);
@@ -187,7 +187,7 @@ public class WidgetFactory {
                             questionWidget = new PrinterWidget(activity, questionDetails, printerWidgetViewModel, questionMediaManager);
                         } else if (appearance.startsWith(Appearances.PRINTER)) {
                             questionWidget = new ExPrinterWidget(activity, questionDetails, waitingForDataRegistry);
-                        } else if (appearance.startsWith(Appearances.EX)) {
+                        } else if (appearance.contains(Appearances.EX)) {
                             questionWidget = new ExStringWidget(activity, questionDetails, waitingForDataRegistry, stringRequester);
                         } else if (appearance.contains(Appearances.NUMBERS)) {
                             questionWidget = new StringNumberWidget(activity, questionDetails);
@@ -275,14 +275,14 @@ public class WidgetFactory {
                 } else {
                     switch (prompt.getDataType()) {
                         case Constants.DATATYPE_INTEGER:
-                            if (prompt.getQuestion().getAppearanceAttr() != null && prompt.getQuestion().getAppearanceAttr().contains(PICKER_APPEARANCE)) {
+                            if (prompt.getAppearanceHint() != null && prompt.getAppearanceHint().contains(PICKER_APPEARANCE)) {
                                 questionWidget = new RangePickerIntegerWidget(activity, questionDetails);
                             } else {
                                 questionWidget = new RangeIntegerWidget(activity, questionDetails);
                             }
                             break;
                         case Constants.DATATYPE_DECIMAL:
-                            if (prompt.getQuestion().getAppearanceAttr() != null && prompt.getQuestion().getAppearanceAttr().contains(PICKER_APPEARANCE)) {
+                            if (prompt.getAppearanceHint() != null && prompt.getAppearanceHint().contains(PICKER_APPEARANCE)) {
                                 questionWidget = new RangePickerDecimalWidget(activity, questionDetails);
                             } else {
                                 questionWidget = new RangeDecimalWidget(activity, questionDetails);

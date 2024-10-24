@@ -369,14 +369,24 @@
   <string name="outdoors" tools:ignore="UnusedResources">Снаружи</string>
   <string name="topographic">Топографический</string>
   <string name="google_play_services_error_occured">Не удалось получить доступ к Google картам. Установлен ли Google Play Services?</string>
-  <string name="reference_layer">Базовый слой</string>
-  <string name="layer_data_file">Файл данных слоя</string>
-  <string name="view_change_location">Показать или изменить местоположение</string>
-  <string name="change_location">Изменить местоположение</string>
+  <!--Title for the offline layer section of settings-->
+  <!--Label for the offline layer setting-->
+  <!--Title for the screen that allows the user to select a offline layer for maps-->
+  <!--Description of how to add offline layers to the project-->
+  <!--Text of button user can press to get help when setting up Offline Layers-->
+  <!--Text for button that lets the user select a offline layer on their device to add-->
+  <!--Text for button that lets the user delete a offline layer-->
+  <!--Text for title displayed in a dialog to inform that some/all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that some of the selected files are not MBTiles and they can't be imported-->
+  <!--Text for title above list of layers-->
+  <!--Text for title and subtitle above options for how the layer can be access-->
+  <!--Text for option where layer should be available to all projects-->
+  <!--Text for option where layer should be available to the current project only-->
+  <!--Text for message displayed in a dialog to confirm that the layer should be deleted. The placeholder is the name of the layer as displayed in the list-->
   <string name="record_geopoint">Зафиксировать точку</string>
   <string name="location_accuracy">Точность: %1$s м</string>
   <string name="location_provider">Провайдер геолокации: %s</string>
-  <string name="get_location">Записать местоположение</string>
   <string name="provider_disabled_error">Включите функцию определения местоположения на вашем устройстве!</string>
   <string name="gps_result">Широта: %1$s\nДолгота: %2$s\nВысота: %3$sм\nТочность:%4$sм</string>
   <string name="google_play_services_not_available">Эта форма хочет отслеживать ваше местоположение, но сервисы Google Play недоступны.</string>
@@ -389,12 +399,6 @@
   <string name="background_location_enabled">Эта форма отслеживает ваше местоположение. Вы можете отключить отслеживание в меню %1$s выше.</string>
   <!--Text of an option available when filling out a form. Tapping this option checks the form for constraint or required violations and navigates the user back to the first field with an error.-->
   <string name="validate">Проверить на ошибки</string>
-  <string name="get_point">Определить местоположение</string>
-  <string name="geopoint_view_read_only">Просмотреть геоточку</string>
-  <string name="geoshape_view_read_only">Просмотр GeoShape</string>
-  <string name="geotrace_view_read_only">Просмотр GeoTrace</string>
-  <string name="get_shape">Начать геофигуру</string>
-  <string name="get_trace">Начать геослед</string>
   <!--%1$s is the time taken so far in hh:mm:ss-->
   <string name="time_elapsed">Истекшее время: %1$s</string>
   <!--%1$s is the accuracy required for a point to be automatically saved-->
@@ -450,8 +454,6 @@
   <string name="geopoint_instruction">Используйте продолжительное нажатие, чтобы расставлять отметки или нажмите кнопку \"добавить отметку\".</string>
   <string name="geopoint_no_draggable_instruction">Нажмите кнопку \"добавить отметку\".</string>
   <string name="discard">Отменить</string>
-  <string name="geoshape_view_change_location">Показать или изменить геофигуру</string>
-  <string name="geotrace_view_change_location">Показать или изменить геослед</string>
   <string name="select_item_count">%s: %d (%d показано на карте)</string>
   <string name="select_item">Выбрать</string>
   <string name="new_item">Новый элемент</string>
@@ -462,8 +464,6 @@
   <string name="location_tracking_notification_channel_name">Отслеживание местоположения</string>
   <!--Title for notification that lets user know their location is currently being tracked-->
   <string name="location_tracking_notification_title">Отслеживание местоположения…</string>
-  <!--Text of button user can press to get help when setting up Reference Layers-->
-  <string name="get_help_with_reference_layers">Получить помощь по слоям</string>
   <!--Description for button that zooms to the user's current location on a map-->
   <string name="show_my_location">Показать мое местоположение</string>
   <!--Description for button that zooms a map so that it shows all items-->
@@ -544,11 +544,8 @@
   <string name="delete_file">Удалить выбранные</string>
   <string name="delete_no">Не удалять</string>
   <string name="delete_yes">Удалить бланки</string>
-  <string name="file_deleted_error">Не удалось удалить %1$s бланк(а/ов) из %2$s</string>
   <string name="form_delete_message">Удаляю выбранные опросники</string>
-  <string name="deleting_form_dialog_update_message">Удаляю опросник: %1$d из %2$d</string>
   <string name="file_deleted_ok">Бланк опросника успешно удалён: %s шт.</string>
-  <string name="file_delete_in_progress">Удаление бланка опросника уже выполняется</string>
   <!--##############################################
     # UNPROTECTED SETTINGS
     ##############################################-->
@@ -866,6 +863,11 @@
     ##############################################-->
   <string name="open_settings">Открыть настройки</string>
   <!--An entity is any person, place or thing that a form can be about. This title appears on an experimental settings screen to view entities managed in the current project.-->
+  <!--Title for setting that controls whether local entity features are enabled or not-->
+  <!--Text for button that leads to browser for the user to view and manage entity lists-->
+  <!--Text for button that deletes all entities for the project-->
+  <!--Text for button that adds a new entity list-->
+  <!--Label for entity that has been created offline and is not on the server yet-->
   <!--##############################################
     # Crash handling
     ##############################################-->
@@ -922,4 +924,22 @@
   <!--Message displayed when the list of forms to delete is empty-->
   <!--Subtext displayed when the list of blank forms to delete is empty-->
   <!--Subtext displayed when the list of filled forms to delete is empty-->
+  <!--##############################################
+    # Savepoint recovery dialog
+    ##############################################-->
+  <!--Title displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Message displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Text for the button that accepts the recovery of the work-->
+  <!--Text for the button that declines the recovery of the work-->
+  <string name="do_not_recover">Отменить</string>
+  <!--Text for the button that initiates getting user location-->
+  <!--Text for the button that displays a map for viewing or changing an already existing location-->
+  <!--Text for the button that displays a map for viewing an already existing location-->
+  <!--Text for the button that initiates getting user location when one is already present-->
+  <!--Text for the button that displays a map for getting a new line-->
+  <!--Text for the button that displays a map for viewing or changing an already existing line-->
+  <!--Text for the button that displays a map for viewing an already existing line-->
+  <!--Text for the button that displays a map for getting a new polygon-->
+  <!--Text for the button that displays a map for viewing or changing an already existing polygon-->
+  <!--Text for the button that displays a map for viewing an already existing polygon-->
 </resources>

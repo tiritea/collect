@@ -7,16 +7,18 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.odk.collect.android.R
 import org.odk.collect.android.activities.FormMapActivity
 import org.odk.collect.android.formmanagement.FormFillingIntentFactory
 import org.odk.collect.android.injection.DaggerUtils
 import org.odk.collect.android.preferences.dialogs.ServerAuthDialogFragment
-import org.odk.collect.android.views.EmptyListView
-import org.odk.collect.androidshared.network.NetworkStateProvider
 import org.odk.collect.androidshared.ui.DialogFragmentUtils
 import org.odk.collect.androidshared.ui.SnackbarUtils
+import org.odk.collect.async.network.NetworkStateProvider
+import org.odk.collect.lists.EmptyListView
+import org.odk.collect.lists.RecyclerViewUtils
 import org.odk.collect.permissions.PermissionListener
 import org.odk.collect.permissions.PermissionsProvider
 import org.odk.collect.strings.localization.LocalizedActivity
@@ -53,7 +55,10 @@ class BlankFormListActivity : LocalizedActivity(), OnFormItemClickListener {
         val menuProvider = BlankFormListMenuProvider(this, viewModel, networkStateProvider)
         addMenuProvider(menuProvider, this)
 
-        findViewById<RecyclerView>(R.id.form_list).adapter = adapter
+        val list = findViewById<RecyclerView>(R.id.form_list)
+        list.layoutManager = LinearLayoutManager(this)
+        list.addItemDecoration(RecyclerViewUtils.verticalLineDivider(this))
+        list.adapter = adapter
 
         initObservers()
     }

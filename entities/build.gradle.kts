@@ -51,8 +51,15 @@ dependencies {
     implementation(project(":strings"))
     implementation(project(":shared"))
     implementation(project(":androidshared"))
+    implementation(project(":material"))
+    implementation(project(":async"))
+    implementation(project(":lists"))
 
     implementation(Dependencies.kotlin_stdlib)
+    implementation(Dependencies.javarosa) {
+        exclude(group = "joda-time")
+        exclude(group = "org.hamcrest", module = "hamcrest-all")
+    }
     implementation(Dependencies.androidx_appcompat)
     implementation(Dependencies.android_material)
     implementation(Dependencies.androidx_navigation_fragment_ktx)
@@ -62,4 +69,6 @@ dependencies {
 
     testImplementation(Dependencies.junit)
     testImplementation(Dependencies.robolectric)
+    testImplementation(Dependencies.hamcrest)
+    testImplementation(Dependencies.mockito_kotlin)
 }

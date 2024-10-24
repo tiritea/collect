@@ -37,6 +37,8 @@
         android:id="@+id/list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_extra_small"
+        app:layout_goneMarginTop="0dp"
         app:layout_constraintTop_toBottomOf="@id/pathtext"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +46,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonholder"
-        style="@style/Widget.Collect.ButtonBar"
+        style="@style/Widget.AndroidShared.ButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +54,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_alignParentBottom="true">
 
-        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeButton
+        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeMaterialButton
             android:id="@+id/jumpBeginningButton"
             style="?materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -63,7 +65,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeButton
+        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeMaterialButton
             android:id="@+id/jumpEndButton"
             style="?materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -75,7 +77,7 @@
             app:layout_constraintStart_toEndOf="@id/jumpBeginningButton"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeButton
+        <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeMaterialButton
             android:id="@+id/exitButton"
             style="?materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -89,7 +91,7 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <org.odk.collect.android.views.EmptyListView
+    <org.odk.collect.lists.EmptyListView
         android:id="@android:id/empty"
         android:layout_width="0dp"
         android:layout_height="0dp"

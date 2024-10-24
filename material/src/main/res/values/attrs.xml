@@ -8,7 +8,14 @@
         <attr name="borderlessButtonIconStyle" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="CollectCustomAttributes">
-        <attr name="widgetButtonQuestionWidgetStyle" format="reference" />
+    <!--  These attributes are extensions to Material 3  -->
+    <declare-styleable name="Material3Custom">
+        <attr name="textAppearanceLabelExtraLarge" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MaterialPill">
+        <attr name="icon" />
+        <attr name="text" format="string" />
+        <attr name="pillBackgroundColor" format="reference"/>
     </declare-styleable>
 </resources>

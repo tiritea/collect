@@ -330,9 +330,21 @@
   <string name="light" tools:ignore="UnusedResources">ភ្លឺ</string>
   <string name="dark" tools:ignore="UnusedResources">ងងឹត</string>
   <string name="google_play_services_error_occured">មិនអាចចូលដំណើរការផែនទី Google ។ តើសេវា Google Play បានដំឡើងហើយឬនៅ?</string>
-  <string name="view_change_location">មើល ឬផ្លាស់ប្តូរទីតាំង</string>
-  <string name="change_location">ផ្លាស់ប្តូរ​ទីតាំង</string>
-  <string name="get_location">ចាប់​យក​ទីតាំង</string>
+  <!--Title for the offline layer section of settings-->
+  <!--Label for the offline layer setting-->
+  <!--Title for the screen that allows the user to select a offline layer for maps-->
+  <!--Description of how to add offline layers to the project-->
+  <!--Text of button user can press to get help when setting up Offline Layers-->
+  <!--Text for button that lets the user select a offline layer on their device to add-->
+  <!--Text for button that lets the user delete a offline layer-->
+  <!--Text for title displayed in a dialog to inform that some/all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that all the selected files are not MBTiles and they can't be imported-->
+  <!--Text for message displayed in a dialog to inform that some of the selected files are not MBTiles and they can't be imported-->
+  <!--Text for title above list of layers-->
+  <!--Text for title and subtitle above options for how the layer can be access-->
+  <!--Text for option where layer should be available to all projects-->
+  <!--Text for option where layer should be available to the current project only-->
+  <!--Text for message displayed in a dialog to confirm that the layer should be deleted. The placeholder is the name of the layer as displayed in the list-->
   <string name="provider_disabled_error">សុំទោស, សេវាចាប់យកទីតាំងត្រូវបានបិទ</string>
   <string name="gps_result">រយៈទទឹង: %1$s\nរយៈបណ្ដោយ: %2$s\nរយៈកំពស់: %3$sm\nភាពត្រឹមត្រូវ: %4$sm</string>
   <!--Action to go to Android settings. Displayed when location providers are disabled.-->
@@ -340,10 +352,6 @@
   <!--Displayed in the form filling menu when a form has background location enabled-->
   <!--Displayed in the form filling menu when a form has background location disabled-->
   <!--Text of an option available when filling out a form. Tapping this option checks the form for constraint or required violations and navigates the user back to the first field with an error.-->
-  <string name="get_point">ចាប់ផ្តើម GeoPoint</string>
-  <string name="geopoint_view_read_only">មើល GeoPoint</string>
-  <string name="get_shape">ចាប់ផ្តើម GeoShape</string>
-  <string name="get_trace">ចាប់ផ្តើម GeoTrace</string>
   <!--%1$s is the time taken so far in hh:mm:ss-->
   <!--%1$s is the accuracy required for a point to be automatically saved-->
   <!--%1$s is the number of satellites being used to get location-->
@@ -380,12 +388,9 @@
   <string name="geopoint_instruction">ចុចយូរដើម្បីដាក់ស្លាកកន្លែង ឬប៉ះប៊ូតុងបន្ថែមស្លាក</string>
   <string name="geopoint_no_draggable_instruction">ប៉ះដើម្បីបន្ថែមប៊ូតុងសម្គាល់</string>
   <string name="discard">បោះបង់</string>
-  <string name="geoshape_view_change_location">មើល ឬផ្លាស់ប្តូរ GeoShape</string>
-  <string name="geotrace_view_change_location">មើល ឬផ្លាស់ប្តូរ GeoTrace</string>
   <!--Name of an action button-->
   <!--Name for the location tracking notifications. Will be seen in Android settings.-->
   <!--Title for notification that lets user know their location is currently being tracked-->
-  <!--Text of button user can press to get help when setting up Reference Layers-->
   <!--Description for button that zooms to the user's current location on a map-->
   <!--Description for button that zooms a map so that it shows all items-->
   <!--Description for button that pauses automatic location recording-->
@@ -442,11 +447,8 @@
   <string name="delete_file">លុប​អ្វី​ដែល​បាន​ជ្រើស</string>
   <string name="delete_no">កុំ​លុប</string>
   <string name="delete_yes">លុប​សំណុំបែបបទ</string>
-  <string name="file_deleted_error">សំុទោស សំណុំ​បែប​បទ​ %1$s នៃ %2$s ដែលបានជ្រើសរើស​មិន​អាច​លុប​បាន​ទេ!</string>
   <string name="form_delete_message">កំពុងលុបទម្រង់ដែលបានជ្រើសរើសរួច</string>
-  <string name="deleting_form_dialog_update_message"> កំពុងលុបទម្រង់: %1$d នៃ %2$d </string>
   <string name="file_deleted_ok">%s សំណុំបែបបទបានលុបដោយជោគជ័យ ! </string>
-  <string name="file_delete_in_progress">សុំទោស, សកម្មភាពនៃការលុបសំណុំបែបបទគឺបានដំណើរការ!</string>
   <!--##############################################
     # UNPROTECTED SETTINGS
     ##############################################-->
@@ -692,6 +694,11 @@
     # Permissions
     ##############################################-->
   <!--An entity is any person, place or thing that a form can be about. This title appears on an experimental settings screen to view entities managed in the current project.-->
+  <!--Title for setting that controls whether local entity features are enabled or not-->
+  <!--Text for button that leads to browser for the user to view and manage entity lists-->
+  <!--Text for button that deletes all entities for the project-->
+  <!--Text for button that adds a new entity list-->
+  <!--Label for entity that has been created offline and is not on the server yet-->
   <!--##############################################
     # Crash handling
     ##############################################-->
@@ -736,4 +743,22 @@
   <!--Message displayed when the list of forms to delete is empty-->
   <!--Subtext displayed when the list of blank forms to delete is empty-->
   <!--Subtext displayed when the list of filled forms to delete is empty-->
+  <!--##############################################
+    # Savepoint recovery dialog
+    ##############################################-->
+  <!--Title displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Message displayed in a dialog before starting a form if there is a work to recover-->
+  <!--Text for the button that accepts the recovery of the work-->
+  <!--Text for the button that declines the recovery of the work-->
+  <string name="do_not_recover">បោះបង់</string>
+  <!--Text for the button that initiates getting user location-->
+  <!--Text for the button that displays a map for viewing or changing an already existing location-->
+  <!--Text for the button that displays a map for viewing an already existing location-->
+  <!--Text for the button that initiates getting user location when one is already present-->
+  <!--Text for the button that displays a map for getting a new line-->
+  <!--Text for the button that displays a map for viewing or changing an already existing line-->
+  <!--Text for the button that displays a map for viewing an already existing line-->
+  <!--Text for the button that displays a map for getting a new polygon-->
+  <!--Text for the button that displays a map for viewing or changing an already existing polygon-->
+  <!--Text for the button that displays a map for viewing an already existing polygon-->
 </resources>

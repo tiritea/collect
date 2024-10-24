@@ -2,7 +2,6 @@ package org.odk.collect.mapbox
 
 import android.content.Context
 import com.mapbox.geojson.Point
-import com.mapbox.maps.extension.style.utils.ColorUtils
 import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationDragListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
@@ -10,7 +9,7 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
-import org.odk.collect.maps.MapConsts.MAPBOX_POLYLINE_STROKE_WIDTH
+import org.odk.collect.maps.LineDescription
 import org.odk.collect.maps.MapFragment
 import org.odk.collect.maps.MapPoint
 
@@ -22,18 +21,17 @@ internal class DynamicPolyLineFeature(
     private val featureId: Int,
     private val featureClickListener: MapFragment.FeatureListener?,
     private val featureDragEndListener: MapFragment.FeatureListener?,
-    private val closedPolygon: Boolean,
-    initMapPoints: Iterable<MapPoint>
-) : MapFeature {
-    val mapPoints = mutableListOf<MapPoint>()
+    private val lineDescription: LineDescription
+) : LineFeature {
+    override val points = mutableListOf<MapPoint>()
     private val pointAnnotations = mutableListOf<PointAnnotation>()
     private val pointAnnotationClickListener = ClickListener()
     private val pointAnnotationDragListener = DragListener()
     private var polylineAnnotation: PolylineAnnotation? = null
 
     init {
-        initMapPoints.forEach {
-            mapPoints.add(it)
+        lineDescription.points.forEach {
+            points.add(it)
             pointAnnotations.add(
                 MapUtils.createPointAnnotation(
                     pointAnnotationManager,
@@ -74,11 +72,11 @@ internal class DynamicPolyLineFeature(
         }
 
         pointAnnotations.clear()
-        mapPoints.clear()
+        points.clear()
     }
 
     fun appendPoint(point: MapPoint) {
-        mapPoints.add(point)
+        points.add(point)
         pointAnnotations.add(
             MapUtils.createPointAnnotation(
                 pointAnnotationManager,
@@ -96,19 +94,19 @@ internal class DynamicPolyLineFeature(
         if (pointAnnotations.isNotEmpty()) {
             pointAnnotationManager.delete(pointAnnotations.last())
             pointAnnotations.removeLast()
-            mapPoints.removeLast()
+            points.removeLast()
             updateLine()
         }
     }
 
     private fun updateLine() {
-        val points = mapPoints
+        val points = points
             .map {
                 Point.fromLngLat(it.longitude, it.latitude, it.altitude)
             }
             .toMutableList()
             .also {
-                if (closedPolygon && it.isNotEmpty()) {
+                if (lineDescription.closed && it.isNotEmpty()) {
                     it.add(it.first())
                 }
             }
@@ -121,8 +119,8 @@ internal class DynamicPolyLineFeature(
             polylineAnnotation = polylineAnnotationManager.create(
                 PolylineAnnotationOptions()
                     .withPoints(points)
-                    .withLineColor(ColorUtils.colorToRgbaString(context.resources.getColor(org.odk.collect.icons.R.color.mapLineColor)))
-                    .withLineWidth(MAPBOX_POLYLINE_STROKE_WIDTH.toDouble())
+                    .withLineColor(lineDescription.getStrokeColor())
+                    .withLineWidth(MapUtils.convertStrokeWidth(lineDescription))
             ).also {
                 polylineAnnotationManager.update(it)
             }
@@ -147,7 +145,7 @@ internal class DynamicPolyLineFeature(
         override fun onAnnotationDrag(annotation: com.mapbox.maps.plugin.annotation.Annotation<*>) {
             pointAnnotations.forEachIndexed { index, pointAnnotation ->
                 if (annotation.id == pointAnnotation.id) {
-                    mapPoints[index] = MapUtils.mapPointFromPointAnnotation(pointAnnotation)
+                    points[index] = MapUtils.mapPointFromPointAnnotation(pointAnnotation)
                 }
             }
             updateLine()

@@ -103,7 +103,7 @@ the specific language governing permissions and limitations under the License.
             app:layout_constraintTop_toBottomOf="@+id/form_edits_warning"
             app:layout_constraintWidth_max="@dimen/max_content_width">
 
-            <com.google.android.material.button.MaterialButton
+            <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeMaterialButton
                 android:id="@+id/save_as_draft"
                 style="?materialButtonOutlinedIconStyle"
                 android:layout_width="0dp"
@@ -111,9 +111,10 @@ the specific language governing permissions and limitations under the License.
                 android:layout_weight="1"
                 android:text="@string/save_as_draft"
                 app:icon="@drawable/ic_save_menu_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:screenName="@string/form_end_screen" />
 
-            <com.google.android.material.button.MaterialButton
+            <org.odk.collect.androidshared.ui.multiclicksafe.MultiClickSafeMaterialButton
                 android:id="@+id/finalize"
                 style="?materialButtonIconStyle"
                 android:layout_width="0dp"
@@ -121,7 +122,8 @@ the specific language governing permissions and limitations under the License.
                 android:layout_weight="1"
                 android:text="@string/finalize"
                 app:icon="@drawable/ic_send_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:screenName="@string/form_end_screen" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

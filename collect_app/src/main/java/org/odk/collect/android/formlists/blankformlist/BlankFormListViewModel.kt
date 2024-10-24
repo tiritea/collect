@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import org.odk.collect.android.formmanagement.FormsDataService
-import org.odk.collect.android.preferences.utilities.FormUpdateMode
-import org.odk.collect.android.preferences.utilities.SettingsUtils
 import org.odk.collect.async.Scheduler
 import org.odk.collect.async.flowOnBackground
 import org.odk.collect.forms.Form
 import org.odk.collect.forms.FormSourceException
 import org.odk.collect.forms.FormSourceException.AuthRequired
 import org.odk.collect.forms.instances.InstancesRepository
+import org.odk.collect.settings.enums.FormUpdateMode
+import org.odk.collect.settings.enums.StringIdEnumUtils.getFormUpdateMode
 import org.odk.collect.settings.keys.ProjectKeys
 import org.odk.collect.shared.settings.Settings
 
@@ -33,7 +33,7 @@ class BlankFormListViewModel(
 ) : ViewModel() {
 
     private val _filterText = MutableStateFlow("")
-    private val _sortingOrder = MutableStateFlow(generalSettings.getInt("formChooserListSortingOrder"))
+    private val _sortingOrder = MutableStateFlow(getSortOrder())
     private val filteredForms = formsDataService.getForms(projectId)
         .combine(_filterText) { forms, filter ->
             Pair(forms, filter)
@@ -49,12 +49,12 @@ class BlankFormListViewModel(
     val syncResult: LiveData<String?> = formsDataService.getDiskError(projectId)
     val isLoading: LiveData<Boolean> = formsDataService.isSyncing(projectId)
 
-    var sortingOrder: Int = generalSettings.getInt("formChooserListSortingOrder")
-        get() { return generalSettings.getInt("formChooserListSortingOrder") }
+    var sortingOrder: SortOrder = getSortOrder()
+        get() { return getSortOrder() }
 
         set(value) {
             field = value
-            generalSettings.save("formChooserListSortingOrder", value)
+            generalSettings.save(ProjectKeys.KEY_BLANK_FORM_SORT_ORDER, value.ordinal)
             _sortingOrder.value = value
         }
 
@@ -85,10 +85,7 @@ class BlankFormListViewModel(
     }
 
     fun isMatchExactlyEnabled(): Boolean {
-        return SettingsUtils.getFormUpdateMode(
-            application,
-            generalSettings
-        ) == FormUpdateMode.MATCH_EXACTLY
+        return generalSettings.getFormUpdateMode(application) == FormUpdateMode.MATCH_EXACTLY
     }
 
     fun isOutOfSyncWithServer(): LiveData<Boolean> {
@@ -120,7 +117,7 @@ class BlankFormListViewModel(
 
     private fun filterAndSortForms(
         forms: List<Form>,
-        sort: Int?,
+        sort: SortOrder,
         filter: String
     ): List<BlankFormListItem> {
         var newListOfForms = forms
@@ -141,22 +138,22 @@ class BlankFormListViewModel(
         }
 
         return when (sort) {
-            0 -> newListOfForms.sortedBy { it.formName.lowercase() }
-            1 -> newListOfForms.sortedByDescending { it.formName.lowercase() }
-            2 -> newListOfForms.sortedByDescending {
+            SortOrder.NAME_ASC -> newListOfForms.sortedBy { it.formName.lowercase() }
+            SortOrder.NAME_DESC -> newListOfForms.sortedByDescending { it.formName.lowercase() }
+            SortOrder.DATE_DESC -> newListOfForms.sortedByDescending {
                 it.dateOfLastDetectedAttachmentsUpdate ?: it.dateOfCreation
             }
-            3 -> newListOfForms.sortedBy {
+            SortOrder.DATE_ASC -> newListOfForms.sortedBy {
                 it.dateOfLastDetectedAttachmentsUpdate ?: it.dateOfCreation
             }
-            4 -> newListOfForms.sortedByDescending { it.dateOfLastUsage }
-            else -> {
-                newListOfForms
-            }
+            SortOrder.LAST_SAVED -> newListOfForms.sortedByDescending { it.dateOfLastUsage }
         }.filter {
             filter.isBlank() || it.formName.contains(filter, true)
         }
     }
+
+    private fun getSortOrder() =
+        SortOrder.entries[generalSettings.getInt(ProjectKeys.KEY_BLANK_FORM_SORT_ORDER)]
 
     class Factory(
         private val instancesRepository: InstancesRepository,
@@ -178,5 +175,13 @@ class BlankFormListViewModel(
                 !generalSettings.getBoolean(ProjectKeys.KEY_HIDE_OLD_FORM_VERSIONS)
             ) as T
         }
+    }
+
+    enum class SortOrder {
+        NAME_ASC,
+        NAME_DESC,
+        DATE_DESC,
+        DATE_ASC,
+        LAST_SAVED
     }
 }

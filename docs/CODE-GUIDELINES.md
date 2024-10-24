@@ -28,6 +28,29 @@ assertThat(ClassToTest.methodToTest("input"), equalTo("expected"));
 assertThat(ClassToTest.methodReturnsNull(), equalTo(null));
 ```
 
+### Backtick test naming
+
+Tests written in Kotlin should use [backtick enclosed method names](https://kotlinlang.org/docs/coding-conventions.html#names-for-test-methods) and use `#` JavaDoc syntax to refer to an object member's in unit tests:
+
+```kotlin
+@Test
+fun `#getHello returns hello string`() {
+    assertThat(subject.getHello(), equalTo("hello"))
+}
+```
+
+Test naming structure is hard to put strict rules around, but in general conditions ("given") should go after the action ("when") and assertion ("then") in this style of method naming:
+
+```kotlin
+@Test
+fun `#getHello returns goodbye string when subject is angry`() {
+    subject.setAngry(true)
+    assertThat(subject.getHello(), equalTo("goodbye"))
+}
+```
+
+Also, to keep test names short, it's best to avoid words like "should" or "will" (`#getHello should return hello string`) and instead use definitive statements with [third person singular verb conjugations](https://www.grammarly.com/blog/verb-forms/) ("returns", "sets", "fetches" etc).
+
 ## XML style guidelines
 
 Follow these naming conventions in Android XML files:
@@ -155,12 +178,18 @@ Collect is a multi module Gradle project. Modules should have a focused feature 
 There's no easy way to define exactly when a new module should be pulled out of an existing one or when new code calls for a new module - it's best to discuss that with the team before making any decisions. Once a structure has been agreed on, to add a new module:
 
 1. Click `File > New > New module...` in Android Studio
-1. Decide whether the new module should be an "Android Library" or "Java or Kotlin Library" - ideally as much code as possible could avoid relying on Android but a lot of features will require at least one Android Library module
-1. Review the generated `build.gradle` and remove any unnecessary dependencies or setup
-1. Add quality checks to the module's `build.gradle`:
+2. Decide whether the new module should be an "Android Library" or "Java or Kotlin Library" - ideally as much code as possible could avoid relying on Android but a lot of features will require at least one Android Library module
+3. Review the generated `build.gradle` and remove any unnecessary dependencies or setup
+4. Add quality checks to the module's `build.gradle`:
 
   ```
   apply from: '../config/quality.gradle'
   ```
 
-1. If the module will have tests, make sure they get run on CI by adding a line to `test_modules.txt` with `<module-name>:test` for a Java Library or `<module-name>:testDebug` for an Android library
+5. If the module will have tests, make sure they get run on CI by adding a line to `test_modules.txt` with `<module-name>` and if it's a non-Android module, registering the `testDebug` task in its `build.gradle` file:
+
+  ```
+  tasks.register("testDebug") {
+    dependsOn("test")
+  }
+  ```

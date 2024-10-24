@@ -4,12 +4,10 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.material.color.MaterialColors
 import org.odk.collect.android.R
 import org.odk.collect.android.utilities.FormsRepositoryProvider
-import org.odk.collect.androidshared.system.ContextUtils.getThemeAttributeValue
 import org.odk.collect.forms.instances.Instance
-import org.odk.collect.material.MaterialPill
+import org.odk.collect.material.ErrorsPill
 import org.odk.collect.strings.R.string
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -29,28 +27,12 @@ object InstanceListItemView {
         setImageFromStatus(imageView, instance)
         setUpSubtext(view, instance, context)
 
-        val pill = view.findViewById<MaterialPill>(R.id.chip)
+        val pill = view.findViewById<ErrorsPill>(R.id.chip)
         if (pill != null) {
             when (instance.status) {
-                Instance.STATUS_INVALID, Instance.STATUS_INCOMPLETE -> {
-                    pill.visibility = View.VISIBLE
-                    pill.setIcon(org.odk.collect.icons.R.drawable.ic_baseline_rule_24)
-                    pill.setText(string.draft_errors)
-                    pill.setPillBackgroundColor(MaterialColors.getColor(pill, com.google.android.material.R.attr.colorErrorContainer))
-                    pill.setTextColor(getThemeAttributeValue(context, com.google.android.material.R.attr.colorOnErrorContainer))
-                    pill.setIconTint(getThemeAttributeValue(context, com.google.android.material.R.attr.colorOnErrorContainer))
-                }
-                Instance.STATUS_VALID -> {
-                    pill.visibility = View.VISIBLE
-                    pill.setIcon(R.drawable.baseline_check_24)
-                    pill.setText(string.draft_no_errors)
-                    pill.setPillBackgroundColor(MaterialColors.getColor(pill, com.google.android.material.R.attr.colorSurfaceContainerHighest))
-                    pill.setTextColor(getThemeAttributeValue(context, com.google.android.material.R.attr.colorOnSurface))
-                    pill.setIconTint(getThemeAttributeValue(context, com.google.android.material.R.attr.colorOnSurface))
-                }
-                else -> {
-                    pill.visibility = View.GONE
-                }
+                Instance.STATUS_INVALID, Instance.STATUS_INCOMPLETE -> pill.errors = true
+                Instance.STATUS_VALID -> pill.errors = false
+                else -> pill.visibility = View.GONE
             }
         }
 
@@ -127,20 +109,8 @@ object InstanceListItemView {
     }
 
     private fun setImageFromStatus(imageView: ImageView, instance: Instance) {
-        val formStatus = instance.status
-        val imageResourceId = getFormStateImageResourceIdForStatus(formStatus)
+        val imageResourceId = instance.getIcon()
         imageView.setImageResource(imageResourceId)
         imageView.tag = imageResourceId
-    }
-
-    private fun getFormStateImageResourceIdForStatus(formStatus: String?): Int {
-        when (formStatus) {
-            Instance.STATUS_INCOMPLETE, Instance.STATUS_INVALID, Instance.STATUS_VALID -> return R.drawable.ic_form_state_saved
-            Instance.STATUS_COMPLETE -> return R.drawable.ic_form_state_finalized
-            Instance.STATUS_SUBMITTED -> return R.drawable.ic_form_state_submitted
-            Instance.STATUS_SUBMISSION_FAILED -> return R.drawable.ic_form_state_submission_failed
-        }
-
-        throw java.lang.IllegalArgumentException()
     }
 }

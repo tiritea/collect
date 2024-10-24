@@ -3,15 +3,16 @@ package org.odk.collect.android.widgets.base;
 import static junit.framework.Assert.assertTrue;
 
 import android.view.View;
+import android.widget.TextView;
 
 import org.javarosa.core.model.data.IAnswerData;
 import org.junit.Test;
 import org.odk.collect.android.R;
 import org.odk.collect.android.support.WidgetTestActivity;
 import org.odk.collect.android.widgets.ExStringWidget;
-import org.odk.collect.android.widgets.StringWidget;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
@@ -31,17 +32,17 @@ public abstract class GeneralExStringWidgetTest<W extends ExStringWidget, A exte
     // TODO we should have such tests for every widget like we have to confirm readOnly option
     @Test
     public void testElementsVisibilityAndAvailability() {
-        assertThat(getSpyWidget().launchIntentButton.getVisibility(), is(View.VISIBLE));
-        assertThat(getSpyWidget().launchIntentButton.isEnabled(), is(Boolean.TRUE));
-        assertThat(getSpyWidget().widgetAnswerText.isEditableState(), is(false));
+        assertThat(getSpyWidget().binding.launchAppButton.getVisibility(), is(View.VISIBLE));
+        assertThat(getSpyWidget().binding.launchAppButton.isEnabled(), is(Boolean.TRUE));
+        assertThat(getSpyWidget().binding.widgetAnswerText.isEditableState(), is(false));
     }
 
     @Test
     public void usingReadOnlyOptionShouldMakeAllClickableElementsDisabled() {
         when(formEntryPrompt.isReadOnly()).thenReturn(true);
 
-        assertThat(getSpyWidget().launchIntentButton.getVisibility(), is(View.GONE));
-        assertThat(getSpyWidget().widgetAnswerText.isEditableState(), is(false));
+        assertThat(getSpyWidget().binding.launchAppButton.getVisibility(), is(View.GONE));
+        assertThat(getSpyWidget().binding.widgetAnswerText.isEditableState(), is(false));
     }
 
     /**
@@ -52,7 +53,7 @@ public abstract class GeneralExStringWidgetTest<W extends ExStringWidget, A exte
      */
     @Test
     public void widgetShouldBeRegisteredForContextMenu() {
-        StringWidget widget = createWidget();
+        ExStringWidget widget = createWidget();
         List<View> viewsRegisterForContextMenu = ((WidgetTestActivity) activity).viewsRegisterForContextMenu;
 
         assertThat(viewsRegisterForContextMenu.size(), is(3));
@@ -64,4 +65,27 @@ public abstract class GeneralExStringWidgetTest<W extends ExStringWidget, A exte
         assertThat(viewsRegisterForContextMenu.get(0).getId(), is(widget.getId()));
         assertThat(viewsRegisterForContextMenu.get(1).getId(), is(widget.getId()));
     }
+
+    @Test
+    public void errorDisappearsOnSetData() {
+        ExStringWidget widget = getWidget();
+        widget.displayError("blah");
+        widget.setData("answer");
+
+        assertThat(widget.errorLayout.getVisibility(), equalTo(TextView.GONE));
+        assertThat(widget.getBackground(), equalTo(null));
+    }
+
+    @Test
+    public void errorDisappearsOnAddingAnswerManuallyViaTheTextField() {
+        ExStringWidget widget = getWidget();
+        widget.displayError("blah");
+        widget.binding.widgetAnswerText.getBinding().editText.setText("answer");
+
+        assertThat(widget.errorLayout.getVisibility(), equalTo(TextView.GONE));
+        assertThat(widget.getBackground(), equalTo(null));
+    }
+
+    @Test
+    public abstract void verifyInputType();
 }

@@ -1,7 +1,18 @@
 package org.odk.collect.android.widgets;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+import static org.odk.collect.android.utilities.Appearances.THOUSANDS_SEP;
+
+import android.text.InputType;
+
 import androidx.annotation.NonNull;
 
+import org.javarosa.core.model.Constants;
 import org.javarosa.core.model.QuestionDef;
 import org.javarosa.core.model.data.DecimalData;
 import org.javarosa.core.model.data.IAnswerData;
@@ -13,14 +24,6 @@ import org.odk.collect.android.widgets.base.GeneralStringWidgetTest;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Random;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-import static org.odk.collect.android.utilities.Appearances.THOUSANDS_SEP;
 
 public class DecimalWidgetTest extends GeneralStringWidgetTest<DecimalWidget, DecimalData> {
 
@@ -35,6 +38,7 @@ public class DecimalWidgetTest extends GeneralStringWidgetTest<DecimalWidget, De
     @NonNull
     @Override
     public DecimalWidget createWidget() {
+        when(formEntryPrompt.getDataType()).thenReturn(Constants.DATATYPE_DECIMAL);
         return new DecimalWidget(activity, new QuestionDetails(formEntryPrompt, readOnlyOverride));
     }
 
@@ -204,5 +208,13 @@ public class DecimalWidgetTest extends GeneralStringWidgetTest<DecimalWidget, De
         assertEquals("123,456,789.54", getWidget().widgetAnswerText.getAnswer());
         assertEquals("123,456,789.54", getWidget().widgetAnswerText.getBinding().editText.getText().toString());
         assertEquals("123,456,789.54", getWidget().widgetAnswerText.getBinding().textView.getText().toString());
+    }
+
+    @Override
+    @Test
+    public void verifyInputType() {
+        DecimalWidget widget = getWidget();
+        assertThat(widget.widgetAnswerText.getBinding().editText.getInputType(), equalTo(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL));
+        assertThat(widget.widgetAnswerText.getBinding().editText.getTransformationMethod(), equalTo(null));
     }
 }
