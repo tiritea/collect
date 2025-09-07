@@ -957,7 +957,7 @@
   <!--Label for entity that has been created offline and is not on the server yet-->
   <string name="offline">离线</string>
   <!--Error message displayed when a user opens a form with an unrecognized entity version-->
-  <string name="unrecognized_entity_version">此版本的 ODK Collect 不支援此形式。請升級收集。如果您仍然遇到此問題，請將其報告給要求您收集資料的人員。\n\n表單實體規格版本： %s</string>
+  <string name="unrecognized_entity_version">此版本的 KoboCollect 不支援此形式。請升級收集。如果您仍然遇到此問題，請將其報告給要求您收集資料的人員。\n\n表單實體規格版本： %s</string>
   <!--##############################################
     # Crash handling
     ##############################################-->
