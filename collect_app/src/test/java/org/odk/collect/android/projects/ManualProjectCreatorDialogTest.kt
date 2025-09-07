@@ -102,7 +102,7 @@ class ManualProjectCreatorDialogTest {
         val scenario = launcherRule.launch(ManualProjectCreatorDialog::class.java)
         scenario.onFragment {
             onView(withHint(org.odk.collect.strings.R.string.server_url)).inRoot(isDialog())
-                .perform(replaceText("demo.getodk.org"))
+                .perform(replaceText("kc.kobotoolbox.org"))
             onView(withText(org.odk.collect.strings.R.string.add)).inRoot(isDialog()).perform(click())
             assertThat(it.isVisible, `is`(true))
 

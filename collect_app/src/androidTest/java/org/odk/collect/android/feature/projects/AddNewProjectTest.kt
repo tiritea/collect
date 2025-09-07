@@ -31,7 +31,7 @@ class AddNewProjectTest {
 
             .openProjectSettingsDialog()
             .assertCurrentProject("my-server.com", "John / my-server.com")
-            .assertInactiveProject("Demo project", "demo.getodk.org")
+            .assertInactiveProject("Demo project", "kc.kobotoolbox.org")
     }
 
     @Test
@@ -47,7 +47,7 @@ class AddNewProjectTest {
             .assertOnPage()
             .openProjectSettingsDialog()
             .assertCurrentProject("my-server.com", "adam / my-server.com")
-            .assertInactiveProject("Demo project", "demo.getodk.org")
+            .assertInactiveProject("Demo project", "kc.kobotoolbox.org")
     }
 
     @Test
@@ -56,13 +56,13 @@ class AddNewProjectTest {
             .openProjectSettingsDialog()
             .clickAddProject()
 
-        testDependencies.fakeBarcodeScannerViewFactory.scan("{\"general\":{\"server_url\":\"https://demo.getodk.org\"},\"admin\":{}}")
+        testDependencies.fakeBarcodeScannerViewFactory.scan("{\"general\":{\"server_url\":\"https://kc.kobotoolbox.org/kobodemouser\"},\"admin\":{}}")
 
         page.assertDuplicateDialogShown()
             .switchToExistingProject()
             .checkIsToastWithMessageDisplayed(org.odk.collect.strings.R.string.switched_project, "Demo project")
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
             .assertNotInactiveProject("Demo project")
     }
 
@@ -72,14 +72,14 @@ class AddNewProjectTest {
             .openProjectSettingsDialog()
             .clickAddProject()
 
-        testDependencies.fakeBarcodeScannerViewFactory.scan("{\"general\":{\"server_url\":\"https://demo.getodk.org\"},\"admin\":{}}")
+        testDependencies.fakeBarcodeScannerViewFactory.scan("{\"general\":{\"server_url\":\"https://kc.kobotoolbox.org/kobodemouser\"},\"admin\":{}}")
 
         page.assertDuplicateDialogShown()
             .addDuplicateProject()
             .checkIsToastWithMessageDisplayed(org.odk.collect.strings.R.string.switched_project, "Demo project")
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
-            .assertInactiveProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
+            .assertInactiveProject("Demo project", "kc.kobotoolbox.org")
     }
 
     @Test
@@ -88,12 +88,12 @@ class AddNewProjectTest {
             .openProjectSettingsDialog()
             .clickAddProject()
             .switchToManualMode()
-            .inputUrl("https://demo.getodk.org")
+            .inputUrl("https://kc.kobotoolbox.org/kobodemouser")
             .addProjectAndAssertDuplicateDialogShown()
             .switchToExistingProject()
             .checkIsToastWithMessageDisplayed(org.odk.collect.strings.R.string.switched_project, "Demo project")
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
             .assertNotInactiveProject("Demo project")
     }
 
@@ -103,12 +103,12 @@ class AddNewProjectTest {
             .openProjectSettingsDialog()
             .clickAddProject()
             .switchToManualMode()
-            .inputUrl("https://demo.getodk.org")
+            .inputUrl("https://kc.kobotoolbox.org/kobodemouser")
             .addProjectAndAssertDuplicateDialogShown()
             .addDuplicateProject()
             .checkIsToastWithMessageDisplayed(org.odk.collect.strings.R.string.switched_project, "Demo project")
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
-            .assertInactiveProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
+            .assertInactiveProject("Demo project", "kc.kobotoolbox.org")
     }
 }

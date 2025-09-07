@@ -92,7 +92,7 @@ class MobileDeviceManagementTest {
                 )
             }
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
             .assertInactiveProject("project1", "john / john.com")
     }
 
@@ -119,7 +119,7 @@ class MobileDeviceManagementTest {
             }
             .pressBack(MainMenuPage())
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
             .assertInactiveProject("project1", "john / john.com")
     }
 
