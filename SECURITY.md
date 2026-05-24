@@ -2,4 +2,4 @@
 
 ## Reporting a Vulnerability
 
-See our [Vulnerability Disclosure Policy](https://getodk.org/vdp).
+Please refer to the [KoboToolbox Vulnerability Reporting Policy](https://www.kobotoolbox.org/about-us/software/vulnerability-reporting/).
