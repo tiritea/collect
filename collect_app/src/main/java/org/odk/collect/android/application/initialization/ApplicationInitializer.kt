@@ -55,8 +55,7 @@ class ApplicationInitializer(
             formsRepositoryProvider
         ).initialize()
         mapsInitializer.initialize()
-        JavaRosaInitializer(propertyManager, projectsDataService, entitiesRepositoryProvider, settingsProvider).initialize()
-        SystemThemeMismatchFixInitializer(context).initialize()
+        JavaRosaInitializer(propertyManager, projectsDataService, entitiesRepositoryProvider).initialize()
     }
 
     private fun initializeFrameworks() {
