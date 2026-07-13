@@ -604,7 +604,7 @@
   <string name="form_updates_available">Tersedia pembaruan formulir</string>
   <string name="newer_version_of_a_form_info">Ini adalah pembaruan dari formulir yang kamu miliki</string>
   <string name="form_update_error">Pembaruan formulir tidak berhasil</string>
-  <string name="form_update_error_massage">Buka ODK Collect untuk mencoba lagi</string>
+  <string name="form_update_error_massage">Buka KoboCollect untuk mencoba lagi</string>
   <!--Text for notification shown while syncing forms with the server-->
   <string name="form_update_notification_title">Sinkronisasi formulir</string>
   <string name="load_remote_form_error">Unduhan daftar formulir tidak berhasil</string>
@@ -1027,7 +1027,7 @@
   <!--First part of the message shown in the banner, informing the user that their device will soon be unsupported-->
   <string name="min_sdk_deprecation_banner_title">Perangkat Anda sebentar lagi tidak akan bisa lagi melakukan pembaruan.</string>
   <!--Second part of the message shown in the banner, informing the user that their device will soon be unsupported-->
-  <string name="min_sdk_deprecation_banner_message">Mulai awal tahun 2026, ODK Collect membutuhkan Android 8+.</string>
+  <string name="min_sdk_deprecation_banner_message">Mulai awal tahun 2026, KoboCollect membutuhkan Android 8+.</string>
   <!--Button text that opens a forum post with more information about upcoming device support changes-->
   <string name="min_sdk_deprecation_learn_more">Pelajari lebih lanjut</string>
   <!--Button text to dismiss the banner-->

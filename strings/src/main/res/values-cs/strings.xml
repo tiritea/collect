@@ -611,7 +611,7 @@
   <string name="form_updates_available">Dostupné aktualizace formuláře</string>
   <string name="newer_version_of_a_form_info">Toto je aktualizace formuláře, který máte</string>
   <string name="form_update_error">Aktualizace formuláře se nezdařila</string>
-  <string name="form_update_error_massage">Otevřete ODK Collect a zkuste to znovu</string>
+  <string name="form_update_error_massage">Otevřete KoboCollect a zkuste to znovu</string>
   <!--Text for notification shown while syncing forms with the server-->
   <string name="form_update_notification_title">Synchronizace formulářů</string>
   <string name="load_remote_form_error">Stažení seznamu formulářů se nezdařilo</string>
@@ -1029,7 +1029,7 @@
   <!--First part of the message shown in the banner, informing the user that their device will soon be unsupported-->
   <string name="min_sdk_deprecation_banner_title">Vaše zařízení již brzy nebude možné aktualizovat.</string>
   <!--Second part of the message shown in the banner, informing the user that their device will soon be unsupported-->
-  <string name="min_sdk_deprecation_banner_message">Od začátku roku 2026 bude aplikace ODK Collect vyžadovat systém Android 8+.</string>
+  <string name="min_sdk_deprecation_banner_message">Od začátku roku 2026 bude aplikace KoboCollect vyžadovat systém Android 8+.</string>
   <!--Button text that opens a forum post with more information about upcoming device support changes-->
   <string name="min_sdk_deprecation_learn_more">Více informací</string>
   <!--Button text to dismiss the banner-->
