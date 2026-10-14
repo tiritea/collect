@@ -26,7 +26,7 @@ class MinSdkDeprecationBanner(
             binding.learnMoreButton.setOnClickListener {
                 webPageService.openWebPage(
                     requireActivity(),
-                    "https://forum.getodk.org/t/56946".toUri()
+                    "https://community.kobotoolbox.org/t/74677".toUri()
                 )
             }
             binding.dismissButton.setOnClickListener {

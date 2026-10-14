@@ -57,7 +57,7 @@ class MinSdkDeprecationBannerTest {
             fragment.requireView().findViewById<MaterialButton>(R.id.learn_more_button).performClick()
             assertThat(
                 webPageService.openedPages,
-                equalTo(listOf("https://forum.getodk.org/t/56946".toUri()))
+                equalTo(listOf("https://community.kobotoolbox.org/t/74677".toUri()))
             )
         }
     }
