@@ -83,6 +83,7 @@ import org.joda.time.LocalDateTime;
 import org.odk.collect.android.R;
 import org.odk.collect.android.analytics.AnalyticsUtils;
 import org.odk.collect.android.application.Collect;
+import org.odk.collect.android.application.CollectComposeThemeProvider;
 import org.odk.collect.android.audio.AMRAppender;
 import org.odk.collect.android.audio.AudioControllerView;
 import org.odk.collect.android.audio.AudioRecordingControllerFragment;
@@ -93,6 +94,7 @@ import org.odk.collect.android.exception.JavaRosaException;
 import org.odk.collect.android.external.InstancesContract;
 import org.odk.collect.android.formentry.BackgroundAudioPermissionDialogFragment;
 import org.odk.collect.android.formentry.BackgroundAudioViewModel;
+import org.odk.collect.android.formentry.CurrentFormIndex;
 import org.odk.collect.android.formentry.FormAnimation;
 import org.odk.collect.android.formentry.FormAnimationType;
 import org.odk.collect.android.formentry.FormEndView;
@@ -157,6 +159,8 @@ import org.odk.collect.android.utilities.InstancesRepositoryProvider;
 import org.odk.collect.android.utilities.MediaUtils;
 import org.odk.collect.android.utilities.SavepointsRepositoryProvider;
 import org.odk.collect.android.utilities.SoftKeyboardController;
+import org.odk.collect.android.widgets.GeoShapeWidget;
+import org.odk.collect.android.widgets.GeoTraceWidget;
 import org.odk.collect.android.widgets.QuestionWidget;
 import org.odk.collect.android.widgets.datetime.DateTimeWidget;
 import org.odk.collect.android.widgets.datetime.pickers.CustomDatePickerDialog;
@@ -167,6 +171,7 @@ import org.odk.collect.android.widgets.range.RangePickerDecimalWidget;
 import org.odk.collect.android.widgets.range.RangePickerIntegerWidget;
 import org.odk.collect.android.widgets.utilities.ExternalAppRecordingRequester;
 import org.odk.collect.android.widgets.utilities.FormControllerWaitingForDataRegistry;
+import org.odk.collect.android.widgets.utilities.GeoPolyDialogFragment;
 import org.odk.collect.android.widgets.utilities.InternalRecordingRequester;
 import org.odk.collect.android.widgets.utilities.WaitingForDataRegistry;
 import org.odk.collect.androidshared.system.IntentLauncher;
@@ -174,6 +179,7 @@ import org.odk.collect.androidshared.system.PlayServicesChecker;
 import org.odk.collect.androidshared.system.ProcessRestoreDetector;
 import org.odk.collect.androidshared.ui.DialogFragmentUtils;
 import org.odk.collect.androidshared.ui.FragmentFactoryBuilder;
+import org.odk.collect.androidshared.ui.DialogUtils;
 import org.odk.collect.androidshared.ui.SnackbarUtils;
 import org.odk.collect.androidshared.ui.ToastUtils;
 import org.odk.collect.async.Scheduler;
@@ -194,11 +200,11 @@ import org.odk.collect.qrcode.zxing.QRCodeCreatorImpl;
 import org.odk.collect.settings.SettingsProvider;
 import org.odk.collect.settings.keys.ProjectKeys;
 import org.odk.collect.strings.localization.LocalizedActivity;
+import org.odk.collect.timedgrid.NavigationWarning;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -216,7 +222,7 @@ import timber.log.Timber;
  * @author Thomas Smyth, Sassafras Tech Collective (tom@sassafrastech.com; constraint behavior
  * option)
  */
-public class FormFillingActivity extends LocalizedActivity implements AnimationListener,
+public class FormFillingActivity extends LocalizedActivity implements CollectComposeThemeProvider, AnimationListener,
         FormLoaderListener, AdvanceToNextListener, SwipeHandler.OnSwipeListener,
         SavepointListener, NumberPickerDialog.NumberPickerListener,
         RankingWidgetDialog.RankingListener, SaveFormIndexTask.SaveFormIndexListener,
@@ -384,7 +390,10 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
     private final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            if (audioRecorder.isRecording() && !backgroundAudioViewModel.isBackgroundRecording()) {
+            NavigationWarning navigationWarning = odkView != null ? odkView.isNavigationBlocked() : null;
+            if (navigationWarning != null) {
+                DialogUtils.show(FormFillingActivity.this, navigationWarning.getTitleRes(), navigationWarning.getMessageRes());
+            } else if (audioRecorder.isRecording() && !backgroundAudioViewModel.isBackgroundRecording()) {
                 // We want the user to stop recording before changing screens
                 DialogFragmentUtils.showIfNotShowing(RecordingWarningDialogFragment.class, getSupportFragmentManager());
             } else {
@@ -409,7 +418,7 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
             sessionId = savedInstanceState.getString(KEY_SESSION_ID);
         }
 
-        viewModelFactory = new FormEntryViewModelFactory(this,
+        viewModelFactory = new FormEntryViewModelFactory(
                 getIntent().getStringExtra(FormOpeningMode.FORM_MODE_KEY),
                 sessionId,
                 scheduler,
@@ -438,6 +447,7 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
                 .forClass(DeleteRepeatDialogFragment.class, () -> new DeleteRepeatDialogFragment(viewModelFactory))
                 .forClass(BackgroundAudioPermissionDialogFragment.class, () -> new BackgroundAudioPermissionDialogFragment(viewModelFactory))
                 .forClass(SelectOneFromMapDialogFragment.class, () -> new SelectOneFromMapDialogFragment(viewModelFactory))
+                .forClass(GeoPolyDialogFragment.class, () -> new GeoPolyDialogFragment(viewModelFactory))
                 .build());
 
         getSupportFragmentManager().setFragmentResultListener(REQUEST_DELETE_REPEAT, this, (requestKey, result) -> deleteGroup());
@@ -491,6 +501,15 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
                     public void save() {
                         saveForm(false, InstancesDaoHelper.isInstanceComplete(getFormController()), null, true);
                     }
+                },
+                () -> {
+                    NavigationWarning navigationWarning = odkView != null ? odkView.isNavigationBlocked() : null;
+                    if (navigationWarning != null) {
+                        DialogUtils.show(this, navigationWarning.getTitleRes(), navigationWarning.getMessageRes());
+                        swipeHandler.setBeenSwiped(false);
+                        return false;
+                    }
+                    return true;
                 }
         );
 
@@ -558,14 +577,9 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
         formEntryViewModel = viewModelProvider.get(FormEntryViewModel.class);
         printerWidgetViewModel = viewModelProvider.get(PrinterWidgetViewModel.class);
 
-        formEntryViewModel.getCurrentIndex().observe(this, indexAndValidationResult -> {
-            if (indexAndValidationResult != null) {
-                FormIndex formIndex = indexAndValidationResult.component1();
-                FailedValidationResult validationResult = indexAndValidationResult.component2();
-                formIndexAnimationHandler.handle(formIndex);
-                if (validationResult != null) {
-                    handleValidationResult(validationResult);
-                }
+        formEntryViewModel.getCurrentIndex().observe(this, index -> {
+            if (index != null) {
+                formIndexAnimationHandler.handle(index.getScreenIndex());
             }
         });
 
@@ -573,22 +587,11 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
             findViewById(R.id.loading_screen).setVisibility(isLoading ? View.VISIBLE : View.GONE);
         });
 
-        formEntryViewModel.setAnswerListener(this::onAnswer);
-
         formEntryViewModel.getError().observe(this, error -> {
             if (error instanceof FormError.NonFatal) {
                 createErrorDialog(error);
                 formEntryViewModel.errorDisplayed();
             }
-        });
-
-        formEntryViewModel.getValidationResult().observe(this, consumable -> {
-            if (consumable.isConsumed()) {
-                return;
-            }
-            ValidationResult validationResult = consumable.getValue();
-            handleValidationResult(validationResult);
-            consumable.consume();
         });
 
         formSaveViewModel = viewModelProvider.get(FormSaveViewModel.class);
@@ -635,13 +638,13 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
         });
     }
 
-    private void handleValidationResult(ValidationResult validationResult) {
+    private void handleValidationResult(ODKView view, ValidationResult validationResult) {
         if (validationResult instanceof FailedValidationResult failedValidationResult) {
             String errorMessage = failedValidationResult.getCustomErrorMessage();
             if (errorMessage == null) {
                 errorMessage = getString(failedValidationResult.getDefaultErrorMessage());
             }
-            getCurrentViewIfODKView().setErrorForQuestionWithIndex(failedValidationResult.getIndex(), errorMessage);
+            view.setErrorForQuestionWithIndex(failedValidationResult.getIndex(), errorMessage);
             swipeHandler.setBeenSwiped(false);
         } else if (validationResult instanceof SuccessValidationResult) {
             SnackbarUtils.showSnackbar(
@@ -903,8 +906,6 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
                 loadMedia(intent.getData());
                 break;
             case RequestCodes.LOCATION_CAPTURE:
-            case RequestCodes.GEOSHAPE_CAPTURE:
-            case RequestCodes.GEOTRACE_CAPTURE:
             case RequestCodes.BEARING_CAPTURE:
             case RequestCodes.BARCODE_CAPTURE:
             case RequestCodes.EX_STRING_CAPTURE:
@@ -943,19 +944,6 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
         return null;
     }
 
-    private void onAnswer(FormIndex index, IAnswerData answer) {
-        ODKView currentViewIfODKView = getCurrentViewIfODKView();
-        if (currentViewIfODKView != null) {
-            Optional<QuestionWidget> widgetForIndex = currentViewIfODKView.getWidgets().stream()
-                    .filter((widget) -> widget.getFormEntryPrompt().getIndex().equals(index))
-                    .findFirst();
-
-            widgetForIndex.ifPresent(questionWidget -> {
-                ((WidgetDataReceiver) questionWidget).setData(answer);
-            });
-        }
-    }
-
     public void setWidgetData(Object data) {
         ODKView currentViewIfODKView = getCurrentViewIfODKView();
 
@@ -988,7 +976,9 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
      * Clears the answer on the screen.
      */
     private void clearAnswer(QuestionWidget qw) {
-        if (qw.getAnswer() != null || qw instanceof DateTimeWidget) {
+        if (qw instanceof GeoTraceWidget || qw instanceof GeoShapeWidget) {
+            formEntryViewModel.answerQuestion(qw.getFormEntryPrompt().getIndex(), null);
+        } else if (qw.getAnswer() != null || qw instanceof DateTimeWidget) {
             qw.clearAnswer();
         }
     }
@@ -1223,6 +1213,13 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
         FormController formController = getFormController();
         if (formController == null) {
             Timber.d("FormController has a null value");
+            swipeHandler.setBeenSwiped(false);
+            return;
+        }
+
+        NavigationWarning navigationWarning = odkView != null ? odkView.isNavigationBlocked() : null;
+        if (navigationWarning != null) {
+            DialogUtils.show(this, navigationWarning.getTitleRes(), navigationWarning.getMessageRes());
             swipeHandler.setBeenSwiped(false);
             return;
         }
@@ -1831,9 +1828,19 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
     private int animationCompletionSet;
 
     private void afterAllAnimations() {
-        if (getCurrentViewIfODKView() != null) {
-            getCurrentViewIfODKView().setFocus(this);
+        ODKView view = getCurrentViewIfODKView();
+        if (view != null) {
+            CurrentFormIndex index = formEntryViewModel.getCurrentIndex().getValue();
+            ValidationResult validationResult = index.getValidationResult();
+            if (validationResult != null) {
+                handleValidationResult(view, validationResult);
+            } else if (index.getQuestionIndex() != null) {
+                view.focusToTopOf(index.getQuestionIndex());
+            } else {
+                view.setFocus(this);
+            }
         }
+
         swipeHandler.setBeenSwiped(false);
     }
 
@@ -2275,7 +2282,7 @@ public class FormFillingActivity extends LocalizedActivity implements AnimationL
                         updateFieldListQuestions(changedWidget.getFormEntryPrompt().getIndex());
                         odkView.post(() -> {
                             if (odkView != null && !odkView.isDisplayed(changedWidget)) {
-                                odkView.scrollToTopOf(changedWidget);
+                                odkView.focusToTopOf(changedWidget);
                             }
                         });
                     } catch (RepeatsInFieldListException e) {
