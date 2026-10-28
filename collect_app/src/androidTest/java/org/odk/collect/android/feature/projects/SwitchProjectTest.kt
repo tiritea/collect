@@ -40,7 +40,7 @@ class SwitchProjectTest {
             // Switch to Turtle nesting
             .openProjectSettingsDialog()
             .assertCurrentProject("my-server.com", "John / my-server.com")
-            .assertInactiveProject("Demo project", "demo.getodk.org")
+            .assertInactiveProject("Demo project", "kc.kobotoolbox.org")
             .selectProject("Demo project")
             .checkIsToastWithMessageDisplayed(org.odk.collect.strings.R.string.switched_project, "Demo project")
             .assertProjectIcon("D")
@@ -109,7 +109,7 @@ class SwitchProjectTest {
             .clickSettings()
             .clickServerSettings()
             .clickOnURL()
-            .assertText("https://demo.getodk.org")
+            .assertText("https://kc.kobotoolbox.org/kobodemouser")
             .clickOKOnDialog()
             .pressBack(ProjectSettingsPage())
             .pressBack(MainMenuPage())

@@ -80,7 +80,8 @@ the specific language governing permissions and limitations under the License.
     <application
         android:name=".application.Collect"
         android:allowBackup="false"
-        android:icon="@drawable/notes"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:installLocation="auto"
         android:label="@string/collect_app_name"
         android:largeHeap="true"
@@ -227,11 +228,11 @@ the specific language governing permissions and limitations under the License.
 
         <provider
             android:name=".external.FormsProvider"
-            android:authorities="org.odk.collect.android.provider.odk.forms"
+            android:authorities="org.koboc.collect.android.provider.odk.forms"
             android:exported="true" />
         <provider
             android:name=".external.InstanceProvider"
-            android:authorities="org.odk.collect.android.provider.odk.instances"
+            android:authorities="org.koboc.collect.android.provider.odk.instances"
             android:exported="true" />
 
         <activity-alias

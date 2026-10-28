@@ -24,11 +24,11 @@ class LaunchScreenTest {
         rule.startAtFirstLaunch()
             .clickTryCollect()
             .openProjectSettingsDialog()
-            .assertCurrentProject("Demo project", "demo.getodk.org")
+            .assertCurrentProject("Demo project", "kc.kobotoolbox.org")
             .clickSettings()
             .clickServerSettings()
             .clickOnURL()
-            .assertText("https://demo.getodk.org")
+            .assertText("https://kc.kobotoolbox.org/kobodemouser")
     }
 
     @Test
