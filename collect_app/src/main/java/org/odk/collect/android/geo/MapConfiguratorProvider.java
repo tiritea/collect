@@ -58,9 +58,6 @@ public class MapConfiguratorProvider {
             sourceOptions.add(new SourceOption(BASEMAP_SOURCE_USGS, org.odk.collect.strings.R.string.basemap_source_usgs,
                     MapboxClassInstanceCreator.createMapboxMapConfigurator(BASEMAP_SOURCE_USGS)
             ));
-            sourceOptions.add(new SourceOption(BASEMAP_SOURCE_CARTO, org.odk.collect.strings.R.string.basemap_source_carto,
-                    MapboxClassInstanceCreator.createMapboxMapConfigurator(BASEMAP_SOURCE_CARTO)
-            ));
         }
 
         initOptions(sourceOptions);
